@@ -35,8 +35,8 @@ export default function FormDaftar({ lomba }) {
 
   if (selesai) {
     return (
-      <div className="rounded-lg border border-emerald-300 bg-emerald-50 p-5 sm:p-7">
-        <h3 className="font-serif text-xl font-bold text-emerald-900">Pendaftaran tercatat</h3>
+      <div className="animate-muncul rounded-2xl border border-emerald-300 bg-emerald-50 p-5 sm:p-7">
+        <h3 className="font-serif text-xl font-bold text-emerald-900">🎉 Pendaftaran tercatat</h3>
         <p className="mt-2 text-sm leading-relaxed text-emerald-900">
           {f.nama} terdaftar di <strong>{selesai}</strong>. Panitia akan menghubungi
           nomor {f.no_wa} sebelum hari H untuk konfirmasi teknis.
@@ -116,9 +116,9 @@ export default function FormDaftar({ lomba }) {
         <button
           onClick={daftar}
           disabled={kirim}
-          className="rounded-md bg-red-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-800 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600"
+          className="rounded-full bg-gradient-to-r from-merah to-merah-tua px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-red-200 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-red-300 disabled:translate-y-0 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600"
         >
-          {kirim ? "Mengirim…" : "Kirim pendaftaran"}
+          {kirim ? "Mengirim…" : "🚩 Kirim pendaftaran"}
         </button>
         <p className="text-xs text-slate-500">
           Nama dan paguyuban akan tampil di daftar peserta. Nomor WhatsApp hanya dilihat panitia.

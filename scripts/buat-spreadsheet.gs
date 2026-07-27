@@ -87,5 +87,10 @@ function siapkanSpreadsheet() {
   var sisa = ss.getSheetByName('Sheet1') || ss.getSheetByName('Sheet 1');
   if (sisa && ss.getSheets().length > 1) ss.deleteSheet(sisa);
 
-  SpreadsheetApp.getUi().alert('Selesai. Enam tab sudah siap dipakai.');
+  SpreadsheetApp.flush();
+  // Jangan pakai getUi().alert() di sini — dialognya muncul di tab spreadsheet,
+  // dan kalau tab itu tidak sedang dibuka skrip menggantung sampai kena batas
+  // 6 menit ("Exceeded maximum execution time").
+  ss.toast('Selesai. Enam tab sudah siap dipakai.', 'Setup', 10);
+  Logger.log('Selesai. Enam tab sudah siap dipakai.');
 }

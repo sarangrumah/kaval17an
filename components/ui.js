@@ -6,7 +6,12 @@ export function Eyebrow({ children, className = "" }) {
 
 export function Kartu({ children, className = "" }) {
   return (
-    <section className={"rounded-lg border border-stone-300 bg-white p-5 sm:p-7 " + className}>
+    <section
+      className={
+        "rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition-shadow duration-300 hover:shadow-md sm:p-7 " +
+        className
+      }
+    >
       {children}
     </section>
   );
@@ -15,6 +20,7 @@ export function Kartu({ children, className = "" }) {
 export function Judul({ children, kecil = false }) {
   return (
     <h2 className={"font-serif font-bold " + (kecil ? "text-lg" : "text-xl sm:text-2xl")}>
+      <span className="mr-2 inline-block h-2.5 w-2.5 rounded-sm bg-merah align-baseline" aria-hidden />
       {children}
     </h2>
   );
@@ -24,7 +30,7 @@ export function Bilah({ persen, lewat = false, tinggi = "h-1.5" }) {
   return (
     <div className={"w-full overflow-hidden rounded-full bg-stone-200 " + tinggi}>
       <div
-        className={"h-full rounded-full transition-all duration-700 " + (lewat ? "bg-amber-500" : "bg-red-600")}
+        className={"h-full rounded-full transition-all duration-700 " + (lewat ? "bg-amber-500" : "bg-merah")}
         style={{ width: `${Math.min(100, Math.max(0, persen))}%` }}
       />
     </div>
@@ -49,7 +55,7 @@ export function Kosong({ children }) {
 
 export function DataGagal() {
   return (
-    <div className="rounded-lg border border-amber-300 bg-amber-50 p-5 sm:p-7">
+    <div className="rounded-2xl border border-amber-300 bg-amber-50 p-5 sm:p-7">
       <h2 className="font-serif text-lg font-bold text-amber-900">
         Data belum bisa ditampilkan
       </h2>

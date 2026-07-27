@@ -4,9 +4,26 @@
 
 html { scroll-behavior: smooth; }
 
+/* Jeda beruntun untuk animasi muncul — dipakai bersama .animate-muncul */
+.jeda-1 { animation-delay: 90ms; }
+.jeda-2 { animation-delay: 180ms; }
+.jeda-3 { animation-delay: 270ms; }
+.jeda-4 { animation-delay: 360ms; }
+.jeda-5 { animation-delay: 450ms; }
+
+/* Garis merah-putih miring, dipakai sebagai bingkai tipis bertema */
+.strip-merah-putih {
+  background: repeating-linear-gradient(
+    -45deg,
+    #ED1C24 0 14px,
+    #ffffff 14px 28px
+  );
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
