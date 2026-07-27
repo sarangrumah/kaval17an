@@ -1,0 +1,129 @@
+"use client";
+
+import { useState } from "react";
+import { PAGUYUBAN } from "@/lib/skema";
+
+export default function FormDaftar({ lomba }) {
+  const [f, setF] = useState({
+    nama: "", no_wa: "", paguyuban: "", lomba_id: "", kategori_usia: "", catatan: "",
+  });
+  const [kirim, setKirim] = useState(false);
+  const [salah, setSalah] = useState("");
+  const [selesai, setSelesai] = useState(null);
+
+  const ubah = (k) => (e) => setF({ ...f, [k]: e.target.value });
+  const terbuka = lomba.filter((l) => !l.penuh);
+
+  async function daftar() {
+    setKirim(true);
+    setSalah("");
+    try {
+      const r = await fetch("/api/daftar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(f),
+      });
+      const j = await r.json();
+      if (!r.ok) setSalah(j.pesan || "Pendaftaran gagal dikirim. Coba sebentar lagi.");
+      else setSelesai(j.lomba);
+    } catch {
+      setSalah("Koneksi terputus. Periksa sinyal lalu kirim ulang.");
+    } finally {
+      setKirim(false);
+    }
+  }
+
+  if (selesai) {
+    return (
+      <div className="rounded-lg border border-emerald-300 bg-emerald-50 p-5 sm:p-7">
+        <h3 className="font-serif text-xl font-bold text-emerald-900">Pendaftaran tercatat</h3>
+        <p className="mt-2 text-sm leading-relaxed text-emerald-900">
+          {f.nama} terdaftar di <strong>{selesai}</strong>. Panitia akan menghubungi
+          nomor {f.no_wa} sebelum hari H untuk konfirmasi teknis.
+        </p>
+        <button
+          onClick={() => {
+            setSelesai(null);
+            setF({ ...f, nama: "", lomba_id: "", kategori_usia: "", catatan: "" });
+          }}
+          className="mt-4 rounded-md bg-emerald-800 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+        >
+          Daftarkan peserta lain
+        </button>
+      </div>
+    );
+  }
+
+  const isi = "w-full rounded-md border border-stone-300 px-3 py-2 text-sm focus:border-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600";
+  const label = "block text-sm font-medium text-slate-700";
+
+  return (
+    <div className="grid gap-4">
+      <div>
+        <label htmlFor="nama" className={label}>Nama lengkap peserta</label>
+        <input id="nama" value={f.nama} onChange={ubah("nama")} className={"mt-1 " + isi} placeholder="Nama sesuai panggilan sehari-hari" />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="wa" className={label}>Nomor WhatsApp</label>
+          <input id="wa" value={f.no_wa} onChange={ubah("no_wa")} inputMode="numeric" className={"mt-1 " + isi} placeholder="081234567890" />
+        </div>
+        <div>
+          <label htmlFor="pg" className={label}>Paguyuban</label>
+          <select id="pg" value={f.paguyuban} onChange={ubah("paguyuban")} className={"mt-1 " + isi}>
+            <option value="">Pilih paguyuban</option>
+            {PAGUYUBAN.map((p) => <option key={p} value={p}>{p}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="lomba" className={label}>Lomba yang diikuti</label>
+          <select id="lomba" value={f.lomba_id} onChange={ubah("lomba_id")} className={"mt-1 " + isi}>
+            <option value="">Pilih lomba</option>
+            {terbuka.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.nama}{l.sisaKuota !== null ? ` — sisa ${l.sisaKuota} slot` : ""}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="usia" className={label}>Kelompok usia</label>
+          <select id="usia" value={f.kategori_usia} onChange={ubah("kategori_usia")} className={"mt-1 " + isi}>
+            <option value="">Pilih kelompok</option>
+            <option>Balita (di bawah 6)</option>
+            <option>Anak (6–12)</option>
+            <option>Remaja (13–17)</option>
+            <option>Dewasa (18+)</option>
+            <option>Lansia (60+)</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="cat" className={label}>Catatan untuk panitia <span className="font-normal text-slate-400">(boleh dikosongkan)</span></label>
+        <input id="cat" value={f.catatan} onChange={ubah("catatan")} className={"mt-1 " + isi} placeholder="Misalnya: mendaftarkan anak, perlu pendamping" />
+      </div>
+
+      {salah && (
+        <p className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">{salah}</p>
+      )}
+
+      <div className="flex items-center gap-4">
+        <button
+          onClick={daftar}
+          disabled={kirim}
+          className="rounded-md bg-red-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-800 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600"
+        >
+          {kirim ? "Mengirim…" : "Kirim pendaftaran"}
+        </button>
+        <p className="text-xs text-slate-500">
+          Nama dan paguyuban akan tampil di daftar peserta. Nomor WhatsApp hanya dilihat panitia.
+        </p>
+      </div>
+    </div>
+  );
+}
