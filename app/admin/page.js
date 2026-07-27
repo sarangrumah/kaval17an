@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Eyebrow, Kartu, Judul, Bilah } from "@/components/ui";
+import { Eyebrow, Kartu, Judul, Bilah, DataGagal } from "@/components/ui";
 import { ambilSemua } from "@/lib/data";
 import { rp } from "@/lib/format";
 
@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 
 export default async function RingkasanAdmin() {
   const d = await ambilSemua();
+  if (d.gagal) return <DataGagal />;
   const tanpaNota = d.keluar.filter((k) => !k.nota).length;
   const lewatPagu = d.rincianPos.filter((p) => p.lewatPagu);
 

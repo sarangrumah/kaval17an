@@ -1,12 +1,17 @@
 import EditorTabel from "@/components/EditorTabel";
-import { Eyebrow } from "@/components/ui";
+import { Eyebrow, DataGagal } from "@/components/ui";
 import { readSheet } from "@/lib/sheets";
 import { keAngka } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminAnggaran() {
-  const pos = await readSheet("PosAnggaran");
+  let pos;
+  try {
+    pos = await readSheet("PosAnggaran");
+  } catch {
+    return <DataGagal />;
+  }
 
   return (
     <>
@@ -28,12 +33,14 @@ export default async function AdminAnggaran() {
           { nama: "urutan", label: "Urutan tampil", tipe: "number", contoh: "1" },
           { nama: "catatan", label: "Catatan untuk warga", lebar: "penuh", contoh: "Wajib diisi bila pos melewati pagu" },
         ]}
-        baris={pos}
-        ringkas={(r) => ({
-          utama: r.nama,
-          sisi: `kode: ${r.id}${r.catatan ? ` · ${r.catatan}` : ""}`,
-          nilai: keAngka(r.pagu),
-        })}
+        baris={pos.map((r) => ({
+          ...r,
+          _ringkas: {
+            utama: r.nama,
+            sisi: `kode: ${r.id}${r.catatan ? ` · ${r.catatan}` : ""}`,
+            nilai: keAngka(r.pagu),
+          },
+        }))}
       />
     </>
   );

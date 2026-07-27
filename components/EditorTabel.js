@@ -7,8 +7,10 @@ import { rp } from "@/lib/format";
 /**
  * Editor sederhana untuk satu tab spreadsheet.
  * `ladang` mendeskripsikan kolom: { nama, label, tipe, pilihan, lebar }
+ * Tiap baris membawa `_ringkas` ({ utama, sisi, nilai }) yang sudah dihitung
+ * di server — fungsi tidak boleh diserahkan ke client component.
  */
-export default function EditorTabel({ tab, ladang, baris, ringkas }) {
+export default function EditorTabel({ tab, ladang, baris }) {
   const router = useRouter();
   const kosong = Object.fromEntries(ladang.map((l) => [l.nama, ""]));
 
@@ -125,6 +127,7 @@ export default function EditorTabel({ tab, ladang, baris, ringkas }) {
           )}
           {baris.map((r) => {
             const dibatalkan = (r.status || "").toLowerCase() === "batal";
+            const ringkas = r._ringkas || { utama: "", sisi: "", nilai: null };
             return (
               <div key={r._baris} className={"flex items-start gap-3 py-3 " + (dibatalkan ? "opacity-50" : "")}>
                 <span className="w-8 shrink-0 pt-0.5 font-mono text-xs tabular-nums text-slate-300">
@@ -132,13 +135,13 @@ export default function EditorTabel({ tab, ladang, baris, ringkas }) {
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className={"text-sm leading-snug " + (dibatalkan ? "line-through" : "")}>
-                    {ringkas(r).utama}
+                    {ringkas.utama}
                   </p>
-                  <p className="mt-1 text-xs text-slate-500">{ringkas(r).sisi}</p>
+                  <p className="mt-1 text-xs text-slate-500">{ringkas.sisi}</p>
                 </div>
-                {ringkas(r).nilai != null && (
+                {ringkas.nilai != null && (
                   <span className="shrink-0 pt-0.5 font-mono text-sm tabular-nums">
-                    {rp(ringkas(r).nilai)}
+                    {rp(ringkas.nilai)}
                   </span>
                 )}
                 {!dibatalkan && (
@@ -147,7 +150,7 @@ export default function EditorTabel({ tab, ladang, baris, ringkas }) {
                             className="text-xs font-medium text-slate-600 hover:text-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600">
                       ubah
                     </button>
-                    <button onClick={() => batalkan(r._baris, ringkas(r).utama)}
+                    <button onClick={() => batalkan(r._baris, ringkas.utama)}
                             className="text-xs font-medium text-slate-400 hover:text-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600">
                       batalkan
                     </button>

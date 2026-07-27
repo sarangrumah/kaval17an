@@ -1,12 +1,17 @@
 import EditorTabel from "@/components/EditorTabel";
-import { Eyebrow } from "@/components/ui";
+import { Eyebrow, DataGagal } from "@/components/ui";
 import { readSheet } from "@/lib/sheets";
 import { tanggalPendek } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminJadwal() {
-  const jadwal = await readSheet("Jadwal");
+  let jadwal;
+  try {
+    jadwal = await readSheet("Jadwal");
+  } catch {
+    return <DataGagal />;
+  }
 
   return (
     <>
@@ -27,12 +32,14 @@ export default async function AdminJadwal() {
           { nama: "lokasi", label: "Lokasi", wajib: true, contoh: "Start Pos Ronda Dahlia" },
           { nama: "pic", label: "Penanggung jawab", contoh: "Pak Yudi" },
         ]}
-        baris={jadwal}
-        ringkas={(r) => ({
-          utama: r.agenda,
-          sisi: `${tanggalPendek(r.tanggal)} · ${r.waktu} · ${r.lokasi}${r.pic ? ` · ${r.pic}` : ""}`,
-          nilai: null,
-        })}
+        baris={jadwal.map((r) => ({
+          ...r,
+          _ringkas: {
+            utama: r.agenda,
+            sisi: `${tanggalPendek(r.tanggal)} · ${r.waktu} · ${r.lokasi}${r.pic ? ` · ${r.pic}` : ""}`,
+            nilai: null,
+          },
+        }))}
       />
     </>
   );

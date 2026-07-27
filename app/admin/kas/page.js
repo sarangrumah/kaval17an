@@ -1,14 +1,19 @@
 import EditorTabel from "@/components/EditorTabel";
-import { Eyebrow } from "@/components/ui";
+import { Eyebrow, DataGagal } from "@/components/ui";
 import { readSheet } from "@/lib/sheets";
 import { keAngka, tanggalPendek } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminKas() {
-  const [keluar, masuk, pos] = await Promise.all([
-    readSheet("Pengeluaran"), readSheet("Pemasukan"), readSheet("PosAnggaran"),
-  ]);
+  let keluar, masuk, pos;
+  try {
+    [keluar, masuk, pos] = await Promise.all([
+      readSheet("Pengeluaran"), readSheet("Pemasukan"), readSheet("PosAnggaran"),
+    ]);
+  } catch {
+    return <DataGagal />;
+  }
   const pilihanPos = pos
     .filter((p) => (p.status || "aktif") !== "batal")
     .map((p) => ({ nilai: p.id, label: p.nama }));
@@ -34,12 +39,14 @@ export default async function AdminKas() {
           { nama: "penanggung_jawab", label: "Penanggung jawab", wajib: true, contoh: "Bu Rina" },
           { nama: "nota", label: "Tautan foto nota", lebar: "penuh", contoh: "Tempel link Google Drive atau Foto" },
         ]}
-        baris={keluar.slice().reverse()}
-        ringkas={(r) => ({
-          utama: r.uraian,
-          sisi: `${tanggalPendek(r.tanggal)} · ${namaPos(r.pos_id)} · ${r.penanggung_jawab}${r.nota ? "" : " · nota belum ada"}`,
-          nilai: keAngka(r.jumlah),
-        })}
+        baris={keluar.slice().reverse().map((r) => ({
+          ...r,
+          _ringkas: {
+            utama: r.uraian,
+            sisi: `${tanggalPendek(r.tanggal)} · ${namaPos(r.pos_id)} · ${r.penanggung_jawab}${r.nota ? "" : " · nota belum ada"}`,
+            nilai: keAngka(r.jumlah),
+          },
+        }))}
       />
 
       <header className="mb-5 mt-10">
@@ -55,12 +62,14 @@ export default async function AdminKas() {
           { nama: "sumber", label: "Sumber", wajib: true, contoh: "Cluster Dahlia / Donatur / Kas bersama" },
           { nama: "nota", label: "Tautan bukti setor", contoh: "Link foto bukti transfer" },
         ]}
-        baris={masuk.slice().reverse()}
-        ringkas={(r) => ({
-          utama: r.uraian,
-          sisi: `${tanggalPendek(r.tanggal)} · ${r.sumber}`,
-          nilai: keAngka(r.jumlah),
-        })}
+        baris={masuk.slice().reverse().map((r) => ({
+          ...r,
+          _ringkas: {
+            utama: r.uraian,
+            sisi: `${tanggalPendek(r.tanggal)} · ${r.sumber}`,
+            nilai: keAngka(r.jumlah),
+          },
+        }))}
       />
     </>
   );

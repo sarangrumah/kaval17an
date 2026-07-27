@@ -1,11 +1,16 @@
 import EditorTabel from "@/components/EditorTabel";
-import { Eyebrow } from "@/components/ui";
+import { Eyebrow, DataGagal } from "@/components/ui";
 import { readSheet } from "@/lib/sheets";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminLomba() {
-  const lomba = await readSheet("Lomba");
+  let lomba;
+  try {
+    lomba = await readSheet("Lomba");
+  } catch {
+    return <DataGagal />;
+  }
 
   return (
     <>
@@ -30,12 +35,14 @@ export default async function AdminLomba() {
           { nama: "jadwal", label: "Waktu pelaksanaan", contoh: "17 Agustus, 09.00" },
           { nama: "deskripsi", label: "Penjelasan singkat", lebar: "penuh", contoh: "Aturan main yang perlu diketahui peserta" },
         ]}
-        baris={lomba}
-        ringkas={(r) => ({
-          utama: r.nama,
-          sisi: `${r.kategori} · kuota ${r.kuota || "bebas"} · ${r.jadwal || "jadwal menyusul"}`,
-          nilai: null,
-        })}
+        baris={lomba.map((r) => ({
+          ...r,
+          _ringkas: {
+            utama: r.nama,
+            sisi: `${r.kategori} · kuota ${r.kuota || "bebas"} · ${r.jadwal || "jadwal menyusul"}`,
+            nilai: null,
+          },
+        }))}
       />
     </>
   );

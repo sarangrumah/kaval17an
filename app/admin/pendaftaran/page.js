@@ -1,11 +1,16 @@
-import { Eyebrow, Kartu, Judul, Cip, Kosong } from "@/components/ui";
+import { Eyebrow, Kartu, Judul, Cip, Kosong, DataGagal } from "@/components/ui";
 import { readSheet } from "@/lib/sheets";
 import { aktif, rapikanWa } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPendaftaran() {
-  const [daftar, lomba] = await Promise.all([readSheet("Pendaftaran"), readSheet("Lomba")]);
+  let daftar, lomba;
+  try {
+    [daftar, lomba] = await Promise.all([readSheet("Pendaftaran"), readSheet("Lomba")]);
+  } catch {
+    return <DataGagal />;
+  }
   const hidup = daftar.filter(aktif);
   const namaLomba = (id) => lomba.find((l) => l.id === id)?.nama || id;
 
