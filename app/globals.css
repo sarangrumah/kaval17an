@@ -20,6 +20,71 @@ html { scroll-behavior: smooth; }
   );
 }
 
+/* --- Adegan lomba anak-anak (balap karung, panjat pinang, tarik tambang) --- */
+
+/* Wadah berperspektif supaya lintasan terasa tiga dimensi */
+.scene-3d { perspective: 640px; }
+
+/* Bidang rumput yang direbahkan; garis lajur otomatis mengerucut ke cakrawala */
+.lintasan-3d {
+  transform: rotateX(58deg);
+  transform-origin: bottom center;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 72px, rgba(255, 255, 255, 0.55) 72px 78px),
+    linear-gradient(#86efac, #4ade80);
+}
+
+/* Pelari menyeberangi lebar penuh wadah */
+@keyframes lintas {
+  from { transform: translate3d(-18%, 0, 0); }
+  to   { transform: translate3d(104%, 0, 0); }
+}
+.animasi-lintas { animation: lintas 10s linear infinite; will-change: transform; }
+
+/* Lompatan karung: jongkok (pipih) lalu melenting ke atas */
+@keyframes lompat-karung {
+  0%   { transform: translateY(0) scaleY(0.92) scaleX(1.06); }
+  30%  { transform: translateY(-38%) scaleY(1.05) scaleX(0.97); }
+  55%  { transform: translateY(0) scaleY(0.9) scaleX(1.08); }
+  72%  { transform: translateY(-10%) scaleY(1.01) scaleX(1); }
+  100% { transform: translateY(0) scaleY(0.92) scaleX(1.06); }
+}
+.animasi-lompat { animation: lompat-karung 0.85s ease-in-out infinite; transform-origin: bottom center; }
+
+/* Bayangan mengecil saat pelari di udara */
+@keyframes bayang-lompat {
+  0%, 55%, 100% { transform: scaleX(1); opacity: 0.3; }
+  30%           { transform: scaleX(0.55); opacity: 0.12; }
+}
+.animasi-bayang { animation: bayang-lompat 0.85s ease-in-out infinite; }
+
+/* Pemanjat pinang: naik, melorot sedikit, naik lagi sampai hadiah, lalu turun */
+@keyframes panjat-pinang {
+  0%   { transform: translateY(0); }
+  32%  { transform: translateY(-104px); }
+  42%  { transform: translateY(-84px); }
+  72%  { transform: translateY(-148px); }
+  84%  { transform: translateY(-148px); }
+  100% { transform: translateY(0); }
+}
+.animasi-panjat { animation: panjat-pinang 8s ease-in-out infinite; }
+
+/* Tambang beserta dua tim tertarik ke kiri dan kanan bergantian */
+@keyframes tarik-tambang {
+  0%, 100% { transform: translateX(-10px); }
+  22%      { transform: translateX(-2px); }
+  50%      { transform: translateX(10px); }
+  74%      { transform: translateX(1px); }
+}
+.animasi-tarik { animation: tarik-tambang 2.4s ease-in-out infinite; }
+
+/* Hentakan kecil tiap penarik supaya tim terlihat hidup */
+@keyframes hentak {
+  0%, 100% { transform: rotate(0deg); }
+  50%      { transform: rotate(-4deg); }
+}
+.animasi-hentak { animation: hentak 1.2s ease-in-out infinite; transform-origin: bottom center; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

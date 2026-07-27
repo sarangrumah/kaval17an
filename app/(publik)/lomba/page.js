@@ -1,3 +1,4 @@
+import Link from "next/link";
 import FormDaftar from "@/components/FormDaftar";
 import { Eyebrow, Kartu, Judul, Bilah, Cip, Kosong, DataGagal } from "@/components/ui";
 import { ambilSemua } from "@/lib/data";
@@ -21,6 +22,12 @@ export default async function HalamanLomba() {
           sudah mendaftar. Satu orang boleh ikut lebih dari satu lomba &mdash; kirim
           formulirnya sekali per lomba.
         </p>
+        <Link
+          href="/qr"
+          className="mt-4 inline-block rounded-full border border-white/40 bg-white/10 px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        >
+          🖨️ Poster QR untuk dibagikan ke tetangga &rarr;
+        </Link>
       </header>
 
       <Kartu className="animate-muncul jeda-1">

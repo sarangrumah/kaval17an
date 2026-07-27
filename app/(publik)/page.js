@@ -1,5 +1,6 @@
 import Link from "next/link";
 import HitungMundur from "@/components/HitungMundur";
+import { AdeganBalapKarung, AdeganPanjatPinang, AdeganTarikTambang } from "@/components/AnimasiLomba";
 import { Konfeti, Kerlip, LogoHUT, PitaMerdeka } from "@/components/Dekor";
 import { Eyebrow, Kartu, Judul, Bilah, DataGagal } from "@/components/ui";
 import { ambilSemua } from "@/lib/data";
@@ -31,7 +32,7 @@ export default async function Beranda() {
               </h1>
               <p className="mt-4 text-sm leading-relaxed text-red-50 sm:text-base">
                 Untuk pertama kalinya Cluster Dahlia, Paguyuban Camar Guyub, dan
-                Paguyuban Ka. AL menggelar satu perayaan. Satu karnaval, satu panggung,
+                Paguyuban Kav. AL menggelar satu perayaan. Satu karnaval, satu panggung,
                 satu buku kas yang boleh dibaca siapa saja.
               </p>
             </div>
@@ -49,6 +50,29 @@ export default async function Beranda() {
         </div>
         <PitaMerdeka />
       </header>
+
+      {/* Adegan lomba anak-anak — pemanasan sebelum hari H */}
+      <Kartu className="animate-muncul jeda-1 mt-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <Judul>Serunya lomba anak-anak</Judul>
+          <Link
+            href="/lomba"
+            className="group text-sm font-semibold text-merah-tua hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-merah"
+          >
+            Daftarkan si kecil{" "}
+            <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
+          </Link>
+        </div>
+        <p className="mt-2 text-sm leading-relaxed text-slate-600">
+          Balap karung, panjat pinang, tarik tambang — panggung utamanya justru
+          milik anak-anak. Intip keseruannya, lalu daftarkan jagoan kecilmu.
+        </p>
+        <AdeganBalapKarung className="mt-4" />
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <AdeganPanjatPinang />
+          <AdeganTarikTambang />
+        </div>
+      </Kartu>
 
       {/* Dua pintu utama */}
       <div className="mt-6 grid gap-5 sm:grid-cols-2">
@@ -142,11 +166,16 @@ export default async function Beranda() {
           koreksi angka, atau usulan lomba? Sampaikan lewat grup WhatsApp paguyuban
           masing-masing. 🇮🇩
         </p>
-        <div className="mt-4 flex items-center justify-between border-t border-stone-200 pt-4">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-stone-200 pt-4">
           <Eyebrow className="text-slate-400">Diperbarui otomatis tiap menit</Eyebrow>
-          <Link href="/login" className="text-xs text-slate-400 transition-colors hover:text-merah-tua">
-            Masuk panitia
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/qr" className="text-xs text-slate-400 transition-colors hover:text-merah-tua">
+              Poster QR pendaftaran
+            </Link>
+            <Link href="/login" className="text-xs text-slate-400 transition-colors hover:text-merah-tua">
+              Masuk panitia
+            </Link>
+          </div>
         </div>
       </footer>
     </main>

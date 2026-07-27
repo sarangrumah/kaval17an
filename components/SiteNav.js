@@ -7,6 +7,7 @@ import { Bunting, BenderaKecil } from "@/components/Dekor";
 const TAUTAN = [
   ["/", "Beranda"],
   ["/lomba", "Lomba"],
+  ["/dukungan", "Dukungan"],
   ["/keuangan", "Keuangan"],
   ["/jadwal", "Jadwal"],
 ];
@@ -15,7 +16,7 @@ export default function SiteNav() {
   const jalur = usePathname();
 
   return (
-    <div className="sticky top-0 z-50">
+    <div className="sticky top-0 z-50 print:hidden">
       {/* Strip merah-putih tipis khas tujuh belasan */}
       <div aria-hidden className="strip-merah-putih h-1.5" />
 
