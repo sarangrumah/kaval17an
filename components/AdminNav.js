@@ -10,6 +10,7 @@ const MENU = [
   ["/admin/lomba", "Lomba"],
   ["/admin/jadwal", "Jadwal"],
   ["/admin/pendaftaran", "Pendaftar"],
+  ["/admin/dukungan", "Dukungan"],
 ];
 
 export default function AdminNav() {

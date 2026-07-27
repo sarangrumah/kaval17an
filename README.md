@@ -1,7 +1,8 @@
 # HUT RI ke-81 · Kavling AL
 
 Situs perayaan tujuh belasan tiga paguyuban Kavling AL: pendaftaran lomba,
-rencana anggaran beserta realisasinya, laporan kas terbuka, dan rundown acara.
+rencana anggaran beserta realisasinya, laporan kas terbuka, rundown acara,
+dan halaman dukungan warga (donasi, doorprize, konsumsi, tenaga, sponsor UMKM).
 Database-nya satu Google Spreadsheet. Hosting-nya Vercel, gratis.
 
 Halaman warga bisa dibuka siapa saja tanpa login. Halaman panitia di `/admin`
@@ -26,7 +27,15 @@ Sekitar 20 menit untuk yang pertama kali.
 2. Menu **Ekstensi → Apps Script**.
 3. Hapus isi editor, tempel seluruh isi `scripts/buat-spreadsheet.gs`, simpan.
 4. Pilih fungsi `siapkanSpreadsheet`, klik **Jalankan**, izinkan aksesnya.
-5. Kembali ke spreadsheet — enam tab sudah terbentuk beserta contoh isinya.
+5. Kembali ke spreadsheet — delapan tab sudah terbentuk beserta contoh isinya.
+
+> **Spreadsheet lama yang belum punya tab `KategoriAnggaran` atau `Dukungan`?**
+> Tempel ulang `scripts/buat-spreadsheet.gs`, lalu jalankan fungsi
+> `tambahTabKategoriAnggaran` dan/atau `tambahTabDukungan` sesuai tab yang belum
+> ada (bukan `siapkanSpreadsheet` — fungsi itu mengosongkan semua tab).
+> Keduanya hanya membuat tab yang hilang, tidak menyentuh data lain. Setelah itu
+> tempel ulang juga `scripts/api.gs` dan deploy ulang (Deploy → Manage
+> deployments → Edit → Version: New version) supaya API mengenal tab barunya.
 
 ---
 
@@ -69,6 +78,9 @@ Butuh dua nilai lagi: `SESSION_SECRET` (string acak minimal 32 karakter) dan
 npm install
 npm run hash -- "passwordpilihananda"
 ```
+
+Salin baris `ADMIN_PASSWORD_HASH="..."` yang tercetak ke `.env.local` dan ke
+Environment Variables di Vercel.
 
 **Bila tidak**, pakai pasangan yang sudah disiapkan di catatan penyerahan,
 lalu ganti belakangan ketika sempat.
@@ -129,12 +141,19 @@ Buka `/admin`, masuk dengan nama pengguna dan password.
 
 | Halaman | Untuk apa |
 |---|---|
-| Ringkasan | Saldo, jumlah pendaftar, dan hal yang perlu ditindaklanjuti |
+| Ringkasan | Kebutuhan anggaran, dana masuk/keluar, progress pendaftaran, rekap per minggu, dan hal yang perlu ditindaklanjuti |
 | Kas | Menambah dan mengubah catatan uang masuk dan uang keluar |
-| Anggaran | Mengatur pos anggaran dan pagunya |
+| Anggaran | Mengatur pos anggaran dan pagunya. Kategori anggaran dipilih dari dropdown; daftar pilihannya diatur di tab `KategoriAnggaran` pada spreadsheet |
 | Lomba | Menambah lomba, mengatur kuota dan biaya |
 | Jadwal | Menyusun rundown acara |
 | Pendaftar | Melihat peserta per lomba, lengkap dengan tautan WhatsApp |
+| Dukungan | Menindaklanjuti tawaran donasi, doorprize, dan bantuan warga yang masuk lewat halaman `/dukungan` |
+
+Warga menawarkan bantuan lewat halaman publik `/dukungan` — dana, doorprize,
+konsumsi, barang, tenaga, atau sponsor UMKM. Nama dan bentuk dukungannya tampil
+di papan dukungan sebagai apresiasi; nomor WhatsApp dan perkiraan nilainya hanya
+terlihat panitia. Dana yang benar-benar diterima tetap dicatat sebagai uang
+masuk di halaman kas supaya buku kas terbuka tetap satu-satunya sumber angka.
 
 Perubahan langsung tersimpan ke spreadsheet. Halaman warga menyusul dalam waktu
 sekitar satu menit karena hasilnya di-cache sebentar agar hemat kuota API.
@@ -173,3 +192,4 @@ semakin sulit menelusuri siapa yang mengubah angka bila kelak ada selisih.
 | Admin bisa membuka halaman tapi gagal menyimpan | Apps Script di-deploy dengan "Execute as" selain **Me** |
 | Build Vercel gagal dengan keluhan `SESSION_SECRET` | Nilainya kurang dari 32 karakter |
 | Angka di halaman warga belum berubah | Cache satu menit. Tunggu sebentar lalu muat ulang |
+| Form dukungan menolak dengan "Tab tidak dikenal" atau "Tab belum ada di spreadsheet" | `scripts/api.gs` di Apps Script masih versi lama, atau tab `Dukungan` belum dibuat — ikuti catatan migrasi di bagian 1 |

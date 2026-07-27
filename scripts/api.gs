@@ -8,12 +8,14 @@
  */
 
 var TAB = {
+  KategoriAnggaran: ['id', 'nama', 'urutan', 'status'],
   PosAnggaran:  ['id', 'nama', 'pagu', 'urutan', 'catatan', 'status'],
   Pemasukan:    ['tanggal', 'uraian', 'sumber', 'jumlah', 'nota', 'status'],
   Pengeluaran:  ['tanggal', 'uraian', 'pos_id', 'penanggung_jawab', 'jumlah', 'nota', 'status'],
   Lomba:        ['id', 'nama', 'kategori', 'kuota', 'biaya', 'lokasi', 'jadwal', 'deskripsi', 'status'],
   Jadwal:       ['tanggal', 'waktu', 'agenda', 'lokasi', 'pic', 'status'],
-  Pendaftaran:  ['waktu_daftar', 'nama', 'no_wa', 'paguyuban', 'lomba_id', 'kategori_usia', 'catatan', 'status']
+  Pendaftaran:  ['waktu_daftar', 'nama', 'no_wa', 'paguyuban', 'lomba_id', 'kategori_usia', 'catatan', 'status'],
+  Dukungan:     ['waktu', 'nama', 'no_wa', 'asal', 'bentuk', 'deskripsi', 'nilai', 'catatan', 'status']
 };
 
 function balas(obj, kode) {

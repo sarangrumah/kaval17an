@@ -6,12 +6,19 @@ import { keAngka } from "@/lib/format";
 export const dynamic = "force-dynamic";
 
 export default async function AdminAnggaran() {
-  let pos;
+  let pos, kategori;
   try {
-    pos = await readSheet("PosAnggaran");
+    [pos, kategori] = await Promise.all([
+      readSheet("PosAnggaran"), readSheet("KategoriAnggaran"),
+    ]);
   } catch {
     return <DataGagal />;
   }
+  const pilihanKategori = kategori
+    .filter((k) => (k.status || "aktif") !== "batal")
+    .sort((a, b) => keAngka(a.urutan) - keAngka(b.urutan))
+    .map((k) => ({ nilai: k.id, label: k.nama }));
+  const namaKategori = (id) => kategori.find((k) => k.id === id)?.nama || id;
 
   return (
     <>
@@ -19,15 +26,16 @@ export default async function AdminAnggaran() {
         <Eyebrow className="text-red-700">Estimasi anggaran</Eyebrow>
         <h1 className="mt-2 font-serif text-3xl font-bold">Pos anggaran</h1>
         <p className="mt-2 text-sm text-slate-600">
-          Kode pos dipakai sebagai penghubung ke catatan pengeluaran, jadi jangan
-          diubah setelah ada belanja yang memakainya. Ubah namanya saja bila perlu.
+          Kategori anggaran dipakai sebagai penghubung ke catatan pengeluaran, jadi
+          jangan diganti setelah ada belanja yang memakainya. Daftar pilihannya
+          diatur di tab <span className="font-mono">KategoriAnggaran</span> pada spreadsheet.
         </p>
       </header>
 
       <EditorTabel
         tab="PosAnggaran"
         ladang={[
-          { nama: "id", label: "Kode pos", wajib: true, contoh: "lomba, panggung, konsumsi" },
+          { nama: "id", label: "Kategori anggaran", wajib: true, pilihan: pilihanKategori },
           { nama: "nama", label: "Nama pos", wajib: true, contoh: "Lomba & Hadiah" },
           { nama: "pagu", label: "Pagu anggaran", tipe: "number", wajib: true, contoh: "6000000" },
           { nama: "urutan", label: "Urutan tampil", tipe: "number", contoh: "1" },
@@ -37,7 +45,7 @@ export default async function AdminAnggaran() {
           ...r,
           _ringkas: {
             utama: r.nama,
-            sisi: `kode: ${r.id}${r.catatan ? ` · ${r.catatan}` : ""}`,
+            sisi: `kategori: ${namaKategori(r.id)}${r.catatan ? ` · ${r.catatan}` : ""}`,
             nilai: keAngka(r.pagu),
           },
         }))}

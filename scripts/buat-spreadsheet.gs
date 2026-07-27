@@ -13,6 +13,19 @@ function siapkanSpreadsheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
   var tabel = {
+    KategoriAnggaran: {
+      header: ['id', 'nama', 'urutan', 'status'],
+      isi: [
+        ['lomba', 'Lomba & Hadiah', 1, 'aktif'],
+        ['panggung', 'Panggung, Sound & Lampu', 2, 'aktif'],
+        ['karnaval', 'Karnaval', 3, 'aktif'],
+        ['konsumsi', 'Konsumsi', 4, 'aktif'],
+        ['pentas', 'Pentas Seni', 5, 'aktif'],
+        ['dekorasi', 'Dekorasi & Umbul-umbul', 6, 'aktif'],
+        ['operasional', 'Operasional & Cadangan', 7, 'aktif'],
+        ['publikasi', 'Dokumentasi & Publikasi', 8, 'aktif']
+      ]
+    },
     PosAnggaran: {
       header: ['id', 'nama', 'pagu', 'urutan', 'catatan', 'status'],
       isi: [
@@ -32,7 +45,7 @@ function siapkanSpreadsheet() {
         ['2026-07-01', 'Saldo kas bersama tahun lalu', 'Umum', 1500000, '', 'aktif'],
         ['2026-07-05', 'Iuran warga 48 KK', 'Cluster Dahlia', 7200000, '', 'aktif'],
         ['2026-07-08', 'Iuran warga 52 KK', 'Paguyuban Camar Guyub', 7800000, '', 'aktif'],
-        ['2026-07-10', 'Iuran warga 40 KK', 'Paguyuban Ka. AL', 6000000, '', 'aktif'],
+        ['2026-07-10', 'Iuran warga 40 KK', 'Paguyuban Kav. AL', 6000000, '', 'aktif'],
         ['2026-07-14', 'Donasi UMKM & warga, 12 donatur', 'Umum', 4250000, '', 'aktif']
       ]
     },
@@ -68,6 +81,10 @@ function siapkanSpreadsheet() {
     Pendaftaran: {
       header: ['waktu_daftar', 'nama', 'no_wa', 'paguyuban', 'lomba_id', 'kategori_usia', 'catatan', 'status'],
       isi: []
+    },
+    Dukungan: {
+      header: ['waktu', 'nama', 'no_wa', 'asal', 'bentuk', 'deskripsi', 'nilai', 'catatan', 'status'],
+      isi: []
     }
   };
 
@@ -91,6 +108,65 @@ function siapkanSpreadsheet() {
   // Jangan pakai getUi().alert() di sini — dialognya muncul di tab spreadsheet,
   // dan kalau tab itu tidak sedang dibuka skrip menggantung sampai kena batas
   // 6 menit ("Exceeded maximum execution time").
-  ss.toast('Selesai. Enam tab sudah siap dipakai.', 'Setup', 10);
-  Logger.log('Selesai. Enam tab sudah siap dipakai.');
+  ss.toast('Selesai. Delapan tab sudah siap dipakai.', 'Setup', 10);
+  Logger.log('Selesai. Delapan tab sudah siap dipakai.');
+}
+
+/**
+ * Untuk spreadsheet yang sudah dipakai sebelum ada tab KategoriAnggaran.
+ * Fungsi ini HANYA membuat tab KategoriAnggaran bila belum ada — tidak
+ * menyentuh tab lain sama sekali, jadi aman dijalankan di tengah acara.
+ * Isinya diambil dari pos yang sudah ada di tab PosAnggaran supaya
+ * catatan lama langsung cocok dengan pilihan dropdown.
+ * (Jangan jalankan ulang siapkanSpreadsheet: fungsi itu mengosongkan semua tab.)
+ */
+function tambahTabKategoriAnggaran() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (ss.getSheetByName('KategoriAnggaran')) {
+    Logger.log('Tab KategoriAnggaran sudah ada. Tidak ada yang diubah.');
+    return;
+  }
+  var header = ['id', 'nama', 'urutan', 'status'];
+  var isi = [];
+  var pos = ss.getSheetByName('PosAnggaran');
+  if (pos) {
+    var nilai = pos.getDataRange().getDisplayValues();
+    for (var i = 1; i < nilai.length; i++) {
+      if (String(nilai[i][0]).trim() === '') continue;
+      // Kolom PosAnggaran: id, nama, pagu, urutan, catatan, status
+      isi.push([nilai[i][0], nilai[i][1], nilai[i][3] || i, nilai[i][5] || 'aktif']);
+    }
+  }
+  var sheet = ss.insertSheet('KategoriAnggaran');
+  sheet.getRange(1, 1, 1, header.length).setValues([header])
+       .setFontWeight('bold').setBackground('#1e293b').setFontColor('#ffffff');
+  if (isi.length) {
+    sheet.getRange(2, 1, isi.length, header.length).setValues(isi);
+  }
+  sheet.setFrozenRows(1);
+  sheet.autoResizeColumns(1, header.length);
+  SpreadsheetApp.flush();
+  Logger.log('Tab KategoriAnggaran berhasil dibuat berisi ' + isi.length + ' kategori.');
+}
+
+/**
+ * Untuk spreadsheet yang sudah dipakai sebelum halaman Dukungan ada.
+ * Fungsi ini HANYA membuat tab Dukungan bila belum ada — tidak menyentuh
+ * tab lain sama sekali, jadi aman dijalankan di tengah acara.
+ * (Jangan jalankan ulang siapkanSpreadsheet: fungsi itu mengosongkan semua tab.)
+ */
+function tambahTabDukungan() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (ss.getSheetByName('Dukungan')) {
+    Logger.log('Tab Dukungan sudah ada. Tidak ada yang diubah.');
+    return;
+  }
+  var header = ['waktu', 'nama', 'no_wa', 'asal', 'bentuk', 'deskripsi', 'nilai', 'catatan', 'status'];
+  var sheet = ss.insertSheet('Dukungan');
+  sheet.getRange(1, 1, 1, header.length).setValues([header])
+       .setFontWeight('bold').setBackground('#1e293b').setFontColor('#ffffff');
+  sheet.setFrozenRows(1);
+  sheet.autoResizeColumns(1, header.length);
+  SpreadsheetApp.flush();
+  Logger.log('Tab Dukungan berhasil dibuat.');
 }
