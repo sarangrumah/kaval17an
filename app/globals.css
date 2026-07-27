@@ -58,13 +58,14 @@ html { scroll-behavior: smooth; }
 }
 .animasi-bayang { animation: bayang-lompat 0.85s ease-in-out infinite; }
 
-/* Pemanjat pinang: naik, melorot sedikit, naik lagi sampai hadiah, lalu turun */
+/* Pemanjat pinang: naik, melorot sedikit, naik lagi sampai hadiah, lalu turun.
+   Tinggi panjatan diatur lewat --naik supaya tiang pendek/panjang sama-sama pas. */
 @keyframes panjat-pinang {
   0%   { transform: translateY(0); }
-  32%  { transform: translateY(-104px); }
-  42%  { transform: translateY(-84px); }
-  72%  { transform: translateY(-148px); }
-  84%  { transform: translateY(-148px); }
+  32%  { transform: translateY(calc(var(--naik, -148px) * 0.7)); }
+  42%  { transform: translateY(calc(var(--naik, -148px) * 0.57)); }
+  72%  { transform: translateY(var(--naik, -148px)); }
+  84%  { transform: translateY(var(--naik, -148px)); }
   100% { transform: translateY(0); }
 }
 .animasi-panjat { animation: panjat-pinang 8s ease-in-out infinite; }

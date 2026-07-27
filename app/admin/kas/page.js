@@ -1,18 +1,19 @@
 import EditorTabel from "@/components/EditorTabel";
-import { Eyebrow, DataGagal } from "@/components/ui";
+import { Eyebrow, DataGagalRingan } from "@/components/ui";
 import { readSheet } from "@/lib/sheets";
 import { keAngka, tanggalPendek } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminKas() {
-  let keluar, masuk, pos;
+  let keluar = [], masuk = [], pos = [];
+  let bacaGagal = false;
   try {
     [keluar, masuk, pos] = await Promise.all([
       readSheet("Pengeluaran"), readSheet("Pemasukan"), readSheet("PosAnggaran"),
     ]);
   } catch {
-    return <DataGagal />;
+    bacaGagal = true;
   }
   const pilihanPos = pos
     .filter((p) => (p.status || "aktif") !== "batal")
@@ -28,6 +29,8 @@ export default async function AdminKas() {
           Isi nominal tanpa titik atau &ldquo;Rp&rdquo;. Contoh: 1850000.
         </p>
       </header>
+
+      {bacaGagal && <DataGagalRingan />}
 
       <EditorTabel
         tab="Pengeluaran"

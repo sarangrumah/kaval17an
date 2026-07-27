@@ -1,5 +1,5 @@
 import EditorTabel from "@/components/EditorTabel";
-import { Eyebrow, DataGagal } from "@/components/ui";
+import { Eyebrow, DataGagalRingan } from "@/components/ui";
 import { readSheet } from "@/lib/sheets";
 import { keAngka, rapikanWa } from "@/lib/format";
 import { BENTUK_DUKUNGAN, ASAL_DUKUNGAN } from "@/lib/skema";
@@ -7,11 +7,12 @@ import { BENTUK_DUKUNGAN, ASAL_DUKUNGAN } from "@/lib/skema";
 export const dynamic = "force-dynamic";
 
 export default async function AdminDukungan() {
-  let dukungan;
+  let dukungan = [];
+  let bacaGagal = false;
   try {
     dukungan = await readSheet("Dukungan");
   } catch {
-    return <DataGagal />;
+    bacaGagal = true;
   }
 
   return (
@@ -26,6 +27,8 @@ export default async function AdminDukungan() {
           Nomor WhatsApp hanya terlihat panitia.
         </p>
       </header>
+
+      {bacaGagal && <DataGagalRingan />}
 
       <EditorTabel
         tab="Dukungan"

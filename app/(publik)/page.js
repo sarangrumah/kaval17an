@@ -1,6 +1,6 @@
 import Link from "next/link";
 import HitungMundur from "@/components/HitungMundur";
-import { AdeganBalapKarung, AdeganPanjatPinang, AdeganTarikTambang } from "@/components/AnimasiLomba";
+import { LatarLomba } from "@/components/AnimasiLomba";
 import { Konfeti, Kerlip, LogoHUT, PitaMerdeka } from "@/components/Dekor";
 import { Eyebrow, Kartu, Judul, Bilah, DataGagal } from "@/components/ui";
 import { ambilSemua } from "@/lib/data";
@@ -16,6 +16,11 @@ export default async function Beranda() {
 
   return (
     <main className="mx-auto max-w-4xl px-3 py-6 sm:px-6">
+
+      {/* Lomba anak-anak menghidupkan latar halaman: pelari balap karung
+          menyeberang di dasar layar, panjat pinang dan tarik tambang mengisi
+          ruang kosong kiri-kanan pada layar lebar */}
+      <LatarLomba />
 
       {/* Tesis acara: ini pertama kalinya tiga paguyuban jadi satu */}
       <header className="animate-muncul relative overflow-hidden rounded-2xl bg-gradient-to-br from-merah via-merah-tua to-merah-pekat text-white shadow-xl shadow-red-200">
@@ -50,29 +55,6 @@ export default async function Beranda() {
         </div>
         <PitaMerdeka />
       </header>
-
-      {/* Adegan lomba anak-anak — pemanasan sebelum hari H */}
-      <Kartu className="animate-muncul jeda-1 mt-5">
-        <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <Judul>Serunya lomba anak-anak</Judul>
-          <Link
-            href="/lomba"
-            className="group text-sm font-semibold text-merah-tua hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-merah"
-          >
-            Daftarkan si kecil{" "}
-            <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
-          </Link>
-        </div>
-        <p className="mt-2 text-sm leading-relaxed text-slate-600">
-          Balap karung, panjat pinang, tarik tambang — panggung utamanya justru
-          milik anak-anak. Intip keseruannya, lalu daftarkan jagoan kecilmu.
-        </p>
-        <AdeganBalapKarung className="mt-4" />
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <AdeganPanjatPinang />
-          <AdeganTarikTambang />
-        </div>
-      </Kartu>
 
       {/* Dua pintu utama */}
       <div className="mt-6 grid gap-5 sm:grid-cols-2">

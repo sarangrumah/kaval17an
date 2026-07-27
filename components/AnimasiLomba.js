@@ -159,6 +159,103 @@ export function AdeganBalapKarung({ className = "" }) {
   );
 }
 
+/**
+ * Latar hidup untuk halaman: menempel di dasar layar (fixed) di belakang
+ * konten. Pelari balap karung menyeberangi lebar halaman dan muncul di
+ * sela-sela kartu; panjat pinang dan tarik tambang mengisi ruang kosong
+ * kiri-kanan yang hanya ada di layar lebar.
+ */
+export function LatarLomba() {
+  const pelari = [
+    { baju: "#F59E0B", nomor: 3, posisi: "bottom-7", ukuran: "h-10 w-7", dur: "34s", jeda: "-12s", hop: "0.95s" },
+    { baju: "#ffffff", nomor: 2, posisi: "bottom-4", ukuran: "h-12 w-8", dur: "27s", jeda: "-21s", hop: "0.85s" },
+    { baju: "#ED1C24", nomor: 1, posisi: "bottom-1", ukuran: "h-14 w-9", dur: "21s", jeda: "0s", hop: "0.78s" },
+  ];
+
+  return (
+    <div aria-hidden className="pointer-events-none fixed inset-x-0 bottom-0 -z-10 h-72 overflow-hidden">
+      {/* rumput tipis di dasar layar */}
+      <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-emerald-200/80 via-emerald-100/40 to-transparent" />
+
+      {/* panjat pinang di ruang kosong kiri (hanya layar lebar) */}
+      <div className="absolute bottom-0 left-6 hidden h-64 w-32 xl:block">
+        <div className="absolute bottom-0 left-1/2 h-52 w-2.5 -translate-x-1/2 rounded-t-full bg-gradient-to-b from-amber-700 via-amber-800 to-amber-950" />
+        <div className="absolute left-1/2 top-[14px] -ml-0.5 flex items-start">
+          <span className="block h-8 w-[3px] rounded-full bg-amber-900" />
+          <span className="-ml-px inline-block origin-left animate-kibar overflow-hidden rounded-r-sm">
+            <span className="block h-2.5 w-7 bg-merah" />
+            <span className="block h-2.5 w-7 bg-white" />
+          </span>
+        </div>
+        <div className="absolute left-1/2 top-[52px] -ml-14 w-28">
+          <div className="animate-goyang" style={{ transformOrigin: "top center" }}>
+            <div className="mx-auto h-2 w-full rounded-full bg-amber-700" />
+            <div className="flex justify-between px-1">
+              <span className="h-5 w-4"><Hadiah warna="#ED1C24" /></span>
+              <span className="h-6 w-4"><Hadiah warna="#0EA5E9" pita="#fff" /></span>
+              <span className="h-5 w-4"><Hadiah warna="#10B981" /></span>
+              <span className="h-6 w-4"><Hadiah warna="#8F0F14" /></span>
+            </div>
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-1/2 -ml-[18px] h-12 w-9"><BocahPanjat baju="#0EA5E9" /></div>
+        <div className="absolute bottom-[38px] left-1/2 -ml-[18px] h-12 w-9"><BocahPanjat baju="#F59E0B" /></div>
+        <div className="absolute bottom-[76px] left-1/2 -ml-[18px] h-12 w-9">
+          <div className="animasi-panjat h-full w-full" style={{ "--naik": "-80px" }}>
+            <BocahPanjat baju="#ED1C24" />
+          </div>
+        </div>
+      </div>
+
+      {/* tarik tambang di ruang kosong kanan (hanya layar lebar) */}
+      <div className="absolute bottom-2 right-2 hidden w-72 xl:block">
+        <div className="animasi-tarik relative h-20">
+          <div className="absolute inset-x-0 top-[54px] h-1 rounded-full bg-amber-700" />
+          <div className="absolute left-1/2 top-[55px] -translate-x-1/2">
+            <div className="h-3 w-0.5 bg-amber-900" />
+            <svg viewBox="0 0 14 10" className="h-2.5 w-3.5 animate-goyang" style={{ transformOrigin: "top center" }}>
+              <path d="M0 0 H14 L7 10 Z" fill="#ED1C24" />
+            </svg>
+          </div>
+          <div className="absolute bottom-0 left-0 flex">
+            {["#ED1C24", "#ffffff"].map((warna, i) => (
+              <div key={i} className={"animasi-hentak h-12 w-12 " + (i > 0 ? "-ml-4" : "")} style={{ animationDelay: `${i * 0.22}s` }}>
+                <BocahTarik baju={warna} />
+              </div>
+            ))}
+          </div>
+          <div className="absolute bottom-0 right-0 flex -scale-x-100">
+            {["#0EA5E9", "#ffffff"].map((warna, i) => (
+              <div key={i} className={"animasi-hentak h-12 w-12 " + (i > 0 ? "-ml-4" : "")} style={{ animationDelay: `${i * 0.22 + 0.5}s` }}>
+                <BocahTarik baju={warna} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* pelari balap karung menyeberangi lebar halaman, muncul di sela kartu */}
+      {pelari.map((p) => (
+        <div
+          key={p.nomor}
+          className={"animasi-lintas absolute w-full " + p.posisi}
+          style={{ animationDuration: p.dur, animationDelay: p.jeda }}
+        >
+          <div className={"relative " + p.ukuran}>
+            <div
+              className="animasi-bayang absolute -bottom-1 left-0 h-1 w-full rounded-full bg-emerald-900"
+              style={{ animationDuration: p.hop }}
+            />
+            <div className="animasi-lompat h-full w-full" style={{ animationDuration: p.hop }}>
+              <BocahKarung baju={p.baju} nomor={p.nomor} />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /** Panjat pinang: dua bocah jadi pondasi, satu memanjat meraih hadiah. */
 export function AdeganPanjatPinang({ className = "" }) {
   return (

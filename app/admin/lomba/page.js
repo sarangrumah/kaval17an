@@ -1,15 +1,16 @@
 import EditorTabel from "@/components/EditorTabel";
-import { Eyebrow, DataGagal } from "@/components/ui";
+import { Eyebrow, DataGagalRingan } from "@/components/ui";
 import { readSheet } from "@/lib/sheets";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminLomba() {
-  let lomba;
+  let lomba = [];
+  let bacaGagal = false;
   try {
     lomba = await readSheet("Lomba");
   } catch {
-    return <DataGagal />;
+    bacaGagal = true;
   }
 
   return (
@@ -22,6 +23,8 @@ export default async function AdminLomba() {
           hilang dari pilihan di formulir pendaftaran warga.
         </p>
       </header>
+
+      {bacaGagal && <DataGagalRingan />}
 
       <EditorTabel
         tab="Lomba"

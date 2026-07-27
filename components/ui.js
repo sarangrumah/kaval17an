@@ -53,6 +53,27 @@ export function Kosong({ children }) {
   return <p className="py-8 text-center text-sm text-slate-500">{children}</p>;
 }
 
+/**
+ * Peringatan untuk halaman admin yang punya formulir tambah: pembacaan gagal,
+ * tetapi editor tetap ditampilkan supaya panitia bisa terus mencatat.
+ * Penulisan memakai request terpisah, jadi masih mungkin berhasil.
+ */
+export function DataGagalRingan() {
+  return (
+    <div className="mb-5 rounded-2xl border border-amber-300 bg-amber-50 p-4 sm:p-5">
+      <p className="font-serif text-base font-bold text-amber-900">
+        Daftar catatan belum bisa dibaca
+      </p>
+      <p className="mt-1 text-sm leading-relaxed text-amber-900">
+        Halaman tidak berhasil membaca spreadsheet panitia, jadi catatan tersimpan
+        belum bisa ditampilkan. Formulir tambah di bawah tetap bisa dipakai &mdash;
+        catatan baru langsung ditulis ke spreadsheet. Muat ulang halaman untuk
+        mencoba membaca lagi, atau hubungi pengurus bila terus berulang.
+      </p>
+    </div>
+  );
+}
+
 export function DataGagal() {
   return (
     <div className="rounded-2xl border border-amber-300 bg-amber-50 p-5 sm:p-7">

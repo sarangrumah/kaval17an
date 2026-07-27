@@ -1,18 +1,19 @@
 import EditorTabel from "@/components/EditorTabel";
-import { Eyebrow, DataGagal } from "@/components/ui";
+import { Eyebrow, DataGagalRingan } from "@/components/ui";
 import { readSheet } from "@/lib/sheets";
 import { keAngka } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminAnggaran() {
-  let pos, kategori;
+  let pos = [], kategori = [];
+  let bacaGagal = false;
   try {
     [pos, kategori] = await Promise.all([
       readSheet("PosAnggaran"), readSheet("KategoriAnggaran"),
     ]);
   } catch {
-    return <DataGagal />;
+    bacaGagal = true;
   }
   const pilihanKategori = kategori
     .filter((k) => (k.status || "aktif") !== "batal")
@@ -31,6 +32,8 @@ export default async function AdminAnggaran() {
           diatur di tab <span className="font-mono">KategoriAnggaran</span> pada spreadsheet.
         </p>
       </header>
+
+      {bacaGagal && <DataGagalRingan />}
 
       <EditorTabel
         tab="PosAnggaran"

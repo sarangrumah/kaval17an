@@ -1,16 +1,17 @@
 import EditorTabel from "@/components/EditorTabel";
-import { Eyebrow, DataGagal } from "@/components/ui";
+import { Eyebrow, DataGagalRingan } from "@/components/ui";
 import { readSheet } from "@/lib/sheets";
 import { tanggalPendek } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminJadwal() {
-  let jadwal;
+  let jadwal = [];
+  let bacaGagal = false;
   try {
     jadwal = await readSheet("Jadwal");
   } catch {
-    return <DataGagal />;
+    bacaGagal = true;
   }
 
   return (
@@ -22,6 +23,8 @@ export default async function AdminJadwal() {
           Agenda diurutkan otomatis menurut tanggal dan jam.
         </p>
       </header>
+
+      {bacaGagal && <DataGagalRingan />}
 
       <EditorTabel
         tab="Jadwal"

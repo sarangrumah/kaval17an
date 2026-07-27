@@ -113,6 +113,29 @@ function siapkanSpreadsheet() {
 }
 
 /**
+ * Kosongkan seluruh data tanpa menyentuh header dan formatnya.
+ * Dipakai saat data contoh sudah tidak diperlukan dan panitia siap
+ * mengisi data sungguhan lewat halaman admin.
+ * (Beda dengan siapkanSpreadsheet yang menulis ulang data contoh.)
+ */
+function kosongkanData() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var nama = ['KategoriAnggaran', 'PosAnggaran', 'Pemasukan', 'Pengeluaran',
+              'Lomba', 'Jadwal', 'Pendaftaran', 'Dukungan'];
+  nama.forEach(function (n) {
+    var sheet = ss.getSheetByName(n);
+    if (!sheet) return;
+    var terakhir = sheet.getMaxRows();
+    if (terakhir > 1) sheet.deleteRows(2, terakhir - 1);
+    // Sisakan beberapa baris kosong supaya sheet tidak terlihat terpotong.
+    sheet.insertRowsAfter(1, 20);
+  });
+  SpreadsheetApp.flush();
+  ss.toast('Semua data dikosongkan. Header tetap utuh.', 'Kosongkan', 10);
+  Logger.log('Semua data dikosongkan. Header tetap utuh.');
+}
+
+/**
  * Untuk spreadsheet yang sudah dipakai sebelum ada tab KategoriAnggaran.
  * Fungsi ini HANYA membuat tab KategoriAnggaran bila belum ada — tidak
  * menyentuh tab lain sama sekali, jadi aman dijalankan di tengah acara.
