@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PAGUYUBAN } from "@/lib/skema";
+import { PAGUYUBAN, KATEGORI_USIA } from "@/lib/skema";
 
 export default function FormDaftar({ lomba }) {
   const [f, setF] = useState({
@@ -94,11 +94,7 @@ export default function FormDaftar({ lomba }) {
           <label htmlFor="usia" className={label}>Kelompok usia</label>
           <select id="usia" value={f.kategori_usia} onChange={ubah("kategori_usia")} className={"mt-1 " + isi}>
             <option value="">Pilih kelompok</option>
-            <option>Balita (di bawah 6)</option>
-            <option>Anak (6–12)</option>
-            <option>Remaja (13–17)</option>
-            <option>Dewasa (18+)</option>
-            <option>Lansia (60+)</option>
+            {KATEGORI_USIA.map((k) => <option key={k}>{k}</option>)}
           </select>
         </div>
       </div>
