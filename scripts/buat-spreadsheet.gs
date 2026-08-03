@@ -85,6 +85,25 @@ function siapkanSpreadsheet() {
     Dukungan: {
       header: ['waktu', 'nama', 'no_wa', 'asal', 'bentuk', 'deskripsi', 'nilai', 'catatan', 'status'],
       isi: []
+    },
+    Nominasi: {
+      header: ['id', 'kategori', 'nama', 'deskripsi', 'urutan', 'status'],
+      isi: [
+        ['sepeda-01', 'Sepeda Hias', 'Contoh: Keluarga Pak Budi', 'Sepeda naga merah-putih', 1, 'aktif'],
+        ['kustom-01', 'Kustom Pawai', 'Contoh: RT 03 Camar Guyub', 'Gerobak kapal pinisi', 1, 'aktif']
+      ]
+    },
+    Suara: {
+      header: ['waktu', 'nominasi_id', 'kategori', 'perangkat', 'status'],
+      isi: []
+    },
+    Pawai: {
+      header: ['kunci', 'nilai', 'status'],
+      isi: [
+        ['mulai', '', 'aktif'],
+        ['selesai', '', 'aktif'],
+        ['pengumuman', 'tidak', 'aktif']
+      ]
     }
   };
 
@@ -108,8 +127,8 @@ function siapkanSpreadsheet() {
   // Jangan pakai getUi().alert() di sini — dialognya muncul di tab spreadsheet,
   // dan kalau tab itu tidak sedang dibuka skrip menggantung sampai kena batas
   // 6 menit ("Exceeded maximum execution time").
-  ss.toast('Selesai. Delapan tab sudah siap dipakai.', 'Setup', 10);
-  Logger.log('Selesai. Delapan tab sudah siap dipakai.');
+  ss.toast('Selesai. Sebelas tab sudah siap dipakai.', 'Setup', 10);
+  Logger.log('Selesai. Sebelas tab sudah siap dipakai.');
 }
 
 /**
@@ -121,7 +140,8 @@ function siapkanSpreadsheet() {
 function kosongkanData() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var nama = ['KategoriAnggaran', 'PosAnggaran', 'Pemasukan', 'Pengeluaran',
-              'Lomba', 'Jadwal', 'Pendaftaran', 'Dukungan'];
+              'Lomba', 'Jadwal', 'Pendaftaran', 'Dukungan',
+              'Nominasi', 'Suara', 'Pawai'];
   nama.forEach(function (n) {
     var sheet = ss.getSheetByName(n);
     if (!sheet) return;
@@ -192,4 +212,41 @@ function tambahTabDukungan() {
   sheet.autoResizeColumns(1, header.length);
   SpreadsheetApp.flush();
   Logger.log('Tab Dukungan berhasil dibuat.');
+}
+
+/**
+ * Untuk spreadsheet yang sudah dipakai sebelum fitur voting pawai ada.
+ * Membuat tab Nominasi, Suara, dan Pawai HANYA bila belum ada — aman
+ * dijalankan kapan saja, tab lain tidak disentuh sama sekali.
+ * Setelah menjalankan ini, tempel ulang scripts/api.gs dan deploy ulang
+ * (versi baru) supaya API mengenal tab barunya.
+ */
+function tambahTabPawai() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var tabel = {
+    Nominasi: { header: ['id', 'kategori', 'nama', 'deskripsi', 'urutan', 'status'], isi: [] },
+    Suara:    { header: ['waktu', 'nominasi_id', 'kategori', 'perangkat', 'status'], isi: [] },
+    Pawai:    {
+      header: ['kunci', 'nilai', 'status'],
+      isi: [['mulai', '', 'aktif'], ['selesai', '', 'aktif'], ['pengumuman', 'tidak', 'aktif']]
+    }
+  };
+  Object.keys(tabel).forEach(function (nama) {
+    if (ss.getSheetByName(nama)) {
+      Logger.log('Tab ' + nama + ' sudah ada. Dilewati.');
+      return;
+    }
+    var t = tabel[nama];
+    var sheet = ss.insertSheet(nama);
+    sheet.getRange(1, 1, 1, t.header.length).setValues([t.header])
+         .setFontWeight('bold').setBackground('#1e293b').setFontColor('#ffffff');
+    if (t.isi.length) {
+      sheet.getRange(2, 1, t.isi.length, t.header.length).setValues(t.isi);
+    }
+    sheet.setFrozenRows(1);
+    sheet.autoResizeColumns(1, t.header.length);
+    Logger.log('Tab ' + nama + ' berhasil dibuat.');
+  });
+  SpreadsheetApp.flush();
+  Logger.log('Selesai. Tab voting pawai siap dipakai.');
 }

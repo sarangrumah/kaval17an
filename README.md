@@ -27,15 +27,17 @@ Sekitar 20 menit untuk yang pertama kali.
 2. Menu **Ekstensi → Apps Script**.
 3. Hapus isi editor, tempel seluruh isi `scripts/buat-spreadsheet.gs`, simpan.
 4. Pilih fungsi `siapkanSpreadsheet`, klik **Jalankan**, izinkan aksesnya.
-5. Kembali ke spreadsheet — delapan tab sudah terbentuk beserta contoh isinya.
+5. Kembali ke spreadsheet — sebelas tab sudah terbentuk beserta contoh isinya.
 
-> **Spreadsheet lama yang belum punya tab `KategoriAnggaran` atau `Dukungan`?**
+> **Spreadsheet lama yang belum punya tab `KategoriAnggaran`, `Dukungan`, atau
+> tab voting pawai (`Nominasi`/`Suara`/`Pawai`)?**
 > Tempel ulang `scripts/buat-spreadsheet.gs`, lalu jalankan fungsi
-> `tambahTabKategoriAnggaran` dan/atau `tambahTabDukungan` sesuai tab yang belum
-> ada (bukan `siapkanSpreadsheet` — fungsi itu mengosongkan semua tab).
-> Keduanya hanya membuat tab yang hilang, tidak menyentuh data lain. Setelah itu
-> tempel ulang juga `scripts/api.gs` dan deploy ulang (Deploy → Manage
-> deployments → Edit → Version: New version) supaya API mengenal tab barunya.
+> `tambahTabKategoriAnggaran`, `tambahTabDukungan`, dan/atau `tambahTabPawai`
+> sesuai tab yang belum ada (bukan `siapkanSpreadsheet` — fungsi itu
+> mengosongkan semua tab). Ketiganya hanya membuat tab yang hilang, tidak
+> menyentuh data lain. Setelah itu tempel ulang juga `scripts/api.gs` dan
+> deploy ulang (Deploy → Manage deployments → Edit → Version: New version)
+> supaya API mengenal tab barunya.
 
 ---
 
@@ -146,8 +148,18 @@ Buka `/admin`, masuk dengan nama pengguna dan password.
 | Anggaran | Mengatur pos anggaran dan pagunya. Kategori anggaran dipilih dari dropdown; daftar pilihannya diatur di tab `KategoriAnggaran` pada spreadsheet |
 | Lomba | Menambah lomba, mengatur kuota dan biaya |
 | Jadwal | Menyusun rundown acara |
+| Pawai | Mengisi nominator Sepeda Hias & Kustom Pawai, membuka/menutup voting, melihat perolehan suara, dan menekan tombol pengumuman pemenang |
 | Pendaftar | Melihat peserta per lomba, lengkap dengan tautan WhatsApp |
 | Dukungan | Menindaklanjuti tawaran donasi, doorprize, dan bantuan warga yang masuk lewat halaman `/dukungan` |
+
+Voting pawai kemerdekaan berjalan di halaman publik `/pawai`: sebelum dibuka
+warga melihat hitung mundur, selama voting tiap HP hanya bisa memberi satu
+suara per kategori (dikenali lewat cookie perangkat — penjagaan wajar untuk
+voting kampung, bukan sistem pemilu), dan begitu panitia menekan "Umumkan
+pemenang" halaman berubah menjadi panggung pengumuman beranimasi. Poster QR-nya
+ada di `/pawai/qr` — tayangkan saat pentas seni dimulai. Perolehan suara
+dirahasiakan dari warga sampai pengumuman; panitia bisa memantaunya kapan saja
+dari halaman admin.
 
 Warga menawarkan bantuan lewat halaman publik `/dukungan` — dana, doorprize,
 konsumsi, barang, tenaga, atau sponsor UMKM. Nama dan bentuk dukungannya tampil
@@ -192,4 +204,4 @@ semakin sulit menelusuri siapa yang mengubah angka bila kelak ada selisih.
 | Admin bisa membuka halaman tapi gagal menyimpan | Apps Script di-deploy dengan "Execute as" selain **Me** |
 | Build Vercel gagal dengan keluhan `SESSION_SECRET` | Nilainya kurang dari 32 karakter |
 | Angka di halaman warga belum berubah | Cache satu menit. Tunggu sebentar lalu muat ulang |
-| Form dukungan menolak dengan "Tab tidak dikenal" atau "Tab belum ada di spreadsheet" | `scripts/api.gs` di Apps Script masih versi lama, atau tab `Dukungan` belum dibuat — ikuti catatan migrasi di bagian 1 |
+| Form dukungan atau halaman pawai menolak dengan "Tab tidak dikenal" atau "Tab belum ada di spreadsheet" | `scripts/api.gs` di Apps Script masih versi lama, atau tab `Dukungan`/`Nominasi`/`Suara`/`Pawai` belum dibuat — ikuti catatan migrasi di bagian 1 |

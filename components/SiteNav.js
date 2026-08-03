@@ -7,6 +7,7 @@ import { Bunting, BenderaKecil } from "@/components/Dekor";
 const TAUTAN = [
   ["/", "Beranda"],
   ["/lomba", "Lomba"],
+  ["/pawai", "Pawai"],
   ["/dukungan", "Dukungan"],
   ["/keuangan", "Keuangan"],
   ["/jadwal", "Jadwal"],

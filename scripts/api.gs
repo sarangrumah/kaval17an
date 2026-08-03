@@ -15,7 +15,10 @@ var TAB = {
   Lomba:        ['id', 'nama', 'kategori', 'kuota', 'biaya', 'lokasi', 'jadwal', 'deskripsi', 'status'],
   Jadwal:       ['tanggal', 'waktu', 'agenda', 'lokasi', 'pic', 'status'],
   Pendaftaran:  ['waktu_daftar', 'nama', 'no_wa', 'paguyuban', 'lomba_id', 'kategori_usia', 'catatan', 'status'],
-  Dukungan:     ['waktu', 'nama', 'no_wa', 'asal', 'bentuk', 'deskripsi', 'nilai', 'catatan', 'status']
+  Dukungan:     ['waktu', 'nama', 'no_wa', 'asal', 'bentuk', 'deskripsi', 'nilai', 'catatan', 'status'],
+  Nominasi:     ['id', 'kategori', 'nama', 'deskripsi', 'urutan', 'status'],
+  Suara:        ['waktu', 'nominasi_id', 'kategori', 'perangkat', 'status'],
+  Pawai:        ['kunci', 'nilai', 'status']
 };
 
 function balas(obj, kode) {
@@ -85,6 +88,21 @@ function doPost(e) {
       if (b.aksi === 'batal') {
         if (!b.baris || b.baris < 2) return balas({ pesan: 'Baris tidak sah.' });
         sheet.getRange(b.baris, kolom.indexOf('status') + 1).setValue('batal');
+        return balas({ ok: true });
+      }
+
+      // Beberapa baris sekaligus dalam satu panggilan — dipakai pendaftaran
+      // yang mencentang lebih dari satu lomba.
+      if (b.aksi === 'tambah_banyak') {
+        var semua = (b.banyak || []).map(function (d) {
+          return kolom.map(function (k) {
+            if (k === 'status') return d.status || 'aktif';
+            return d[k] !== undefined && d[k] !== null ? String(d[k]) : '';
+          });
+        });
+        if (semua.length) {
+          sheet.getRange(sheet.getLastRow() + 1, 1, semua.length, kolom.length).setValues(semua);
+        }
         return balas({ ok: true });
       }
 

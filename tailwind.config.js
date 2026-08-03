@@ -46,6 +46,18 @@ module.exports = {
           "0%, 100%": { transform: "scale(1)" },
           "50%": { transform: "scale(1.06)" },
         },
+        // Kartu pemenang meletup keluar dengan sedikit overshoot.
+        meletup: {
+          "0%": { opacity: "0", transform: "scale(0.3) rotate(-6deg)" },
+          "60%": { opacity: "1", transform: "scale(1.12) rotate(2deg)" },
+          "100%": { opacity: "1", transform: "scale(1) rotate(0deg)" },
+        },
+        // Getaran tegang untuk hitungan drumroll sebelum juara diungkap.
+        gemetar: {
+          "0%, 100%": { transform: "translateX(0) rotate(0deg)" },
+          "25%": { transform: "translateX(-3px) rotate(-2deg)" },
+          "75%": { transform: "translateX(3px) rotate(2deg)" },
+        },
       },
       animation: {
         kibar: "kibar 2.6s ease-in-out infinite",
@@ -56,6 +68,8 @@ module.exports = {
         kelip: "kelip 2.4s ease-in-out infinite",
         geser: "geser 24s linear infinite",
         detak: "detak 2s ease-in-out infinite",
+        meletup: "meletup 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both",
+        gemetar: "gemetar 0.3s ease-in-out infinite",
       },
     },
   },

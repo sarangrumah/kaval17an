@@ -9,6 +9,7 @@ const MENU = [
   ["/admin/anggaran", "Anggaran"],
   ["/admin/lomba", "Lomba"],
   ["/admin/jadwal", "Jadwal"],
+  ["/admin/pawai", "Pawai"],
   ["/admin/pendaftaran", "Pendaftar"],
   ["/admin/dukungan", "Dukungan"],
 ];

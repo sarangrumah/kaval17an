@@ -32,7 +32,7 @@ export default function KodeQR({ path = "/lomba" }) {
         <div
           className="h-52 w-52 sm:h-64 sm:w-64 [&_svg]:h-full [&_svg]:w-full"
           role="img"
-          aria-label={"Kode QR menuju formulir pendaftaran lomba di " + alamat}
+          aria-label={"Kode QR menuju " + alamat}
           dangerouslySetInnerHTML={{ __html: svg }}
         />
         {!svg && (
