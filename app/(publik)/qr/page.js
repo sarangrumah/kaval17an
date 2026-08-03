@@ -47,7 +47,7 @@ export default function HalamanQR() {
               <ol className="mt-4 space-y-3">
                 {[
                   ["1", "Arahkan kamera HP ke kode QR di samping."],
-                  ["2", "Isi nama, nomor WhatsApp, dan pilih lombanya."],
+                  ["2", "Isi nama, nomor WhatsApp, dan centang lombanya — boleh lebih dari satu."],
                   ["3", "Kirim — panitia akan menghubungi sebelum hari H."],
                 ].map(([n, teks]) => (
                   <li key={n} className="flex items-start gap-3">
@@ -59,8 +59,8 @@ export default function HalamanQR() {
                 ))}
               </ol>
               <p className="mt-4 text-xs leading-relaxed text-slate-500">
-                Gratis untuk sebagian besar lomba. Satu orang boleh ikut lebih dari
-                satu lomba. Pendaftaran ditutup bila kuota penuh.
+                Gratis untuk sebagian besar lomba. Satu orang boleh ikut beberapa
+                lomba sekaligus dalam sekali daftar. Pendaftaran ditutup bila kuota penuh.
               </p>
             </div>
           </div>

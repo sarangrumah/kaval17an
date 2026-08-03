@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { appendRow, readSheet } from "@/lib/sheets";
+import { appendRows, readSheet } from "@/lib/sheets";
 import { rapikanWa, aktif, keAngka } from "@/lib/format";
 import { PAGUYUBAN } from "@/lib/skema";
 
@@ -10,9 +10,16 @@ export async function POST(req) {
   const nama = String(b.nama || "").trim();
   const wa = rapikanWa(b.no_wa);
   const paguyuban = String(b.paguyuban || "").trim();
-  const lombaId = String(b.lomba_id || "").trim();
   const kategori = String(b.kategori_usia || "").trim();
   const catatan = String(b.catatan || "").trim().slice(0, 200);
+
+  // Satu peserta boleh langsung memilih beberapa lomba dalam satu kiriman.
+  // lomba_id tunggal tetap diterima demi formulir lama yang masih terbuka.
+  const lombaIds = [...new Set(
+    (Array.isArray(b.lomba_ids) ? b.lomba_ids : [b.lomba_id])
+      .map((id) => String(id || "").trim())
+      .filter(Boolean)
+  )].slice(0, 20);
 
   if (nama.length < 3) {
     return NextResponse.json({ pesan: "Isi nama lengkap peserta." }, { status: 400 });
@@ -23,42 +30,62 @@ export async function POST(req) {
   if (!PAGUYUBAN.includes(paguyuban)) {
     return NextResponse.json({ pesan: "Pilih paguyuban Anda." }, { status: 400 });
   }
+  if (lombaIds.length === 0) {
+    return NextResponse.json({ pesan: "Centang minimal satu lomba yang mau diikuti." }, { status: 400 });
+  }
 
   const [lomba, pendaftar] = await Promise.all([
     readSheet("Lomba"),
     readSheet("Pendaftaran"),
   ]);
-  const target = lomba.filter(aktif).find((l) => l.id === lombaId);
-  if (!target) {
-    return NextResponse.json({ pesan: "Lomba itu sudah tidak dibuka." }, { status: 400 });
-  }
-
-  const sudah = pendaftar.filter(aktif).filter((p) => p.lomba_id === lombaId);
-  const kuota = keAngka(target.kuota);
-  if (kuota > 0 && sudah.length >= kuota) {
-    return NextResponse.json(
-      { pesan: `Kuota ${target.nama} sudah penuh. Coba lomba lain, atau hubungi panitia.` },
-      { status: 409 }
-    );
-  }
-  if (sudah.some((p) => rapikanWa(p.no_wa) === wa && p.nama.toLowerCase() === nama.toLowerCase())) {
-    return NextResponse.json(
-      { pesan: "Nama ini sudah terdaftar di lomba tersebut." },
-      { status: 409 }
-    );
-  }
+  const lombaAktif = lomba.filter(aktif);
+  const daftarAktif = pendaftar.filter(aktif);
 
   const waktu = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-  await appendRow("Pendaftaran", {
-    waktu_daftar: waktu,
-    nama,
-    no_wa: "'" + wa,
-    paguyuban,
-    lomba_id: lombaId,
-    kategori_usia: kategori,
-    catatan,
-    status: "aktif",
-  });
+  const barisBaru = [];
+  const berhasil = [];
+  const ditolak = [];
 
-  return NextResponse.json({ ok: true, lomba: target.nama });
+  for (const id of lombaIds) {
+    const target = lombaAktif.find((l) => l.id === id);
+    if (!target) {
+      ditolak.push({ lomba: id, alasan: "sudah tidak dibuka" });
+      continue;
+    }
+
+    const terisi = daftarAktif.filter((p) => p.lomba_id === id).length + barisBaru.filter((r) => r.lomba_id === id).length;
+    const kuota = keAngka(target.kuota);
+    if (kuota > 0 && terisi >= kuota) {
+      ditolak.push({ lomba: target.nama, alasan: "kuota sudah penuh" });
+      continue;
+    }
+    if (daftarAktif.some((p) => p.lomba_id === id && rapikanWa(p.no_wa) === wa && p.nama.toLowerCase() === nama.toLowerCase())) {
+      ditolak.push({ lomba: target.nama, alasan: "nama ini sudah terdaftar di lomba tersebut" });
+      continue;
+    }
+
+    barisBaru.push({
+      waktu_daftar: waktu,
+      nama,
+      no_wa: "'" + wa,
+      paguyuban,
+      lomba_id: id,
+      kategori_usia: kategori,
+      catatan,
+      status: "aktif",
+    });
+    berhasil.push(target.nama);
+  }
+
+  if (barisBaru.length === 0) {
+    const rincian = ditolak.map((t) => `${t.lomba} (${t.alasan})`).join(", ");
+    return NextResponse.json(
+      { pesan: `Tidak ada lomba yang bisa didaftarkan: ${rincian}.`, ditolak },
+      { status: 409 }
+    );
+  }
+
+  await appendRows("Pendaftaran", barisBaru);
+
+  return NextResponse.json({ ok: true, berhasil, ditolak });
 }

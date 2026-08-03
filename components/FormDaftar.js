@@ -5,8 +5,9 @@ import { PAGUYUBAN, KATEGORI_USIA } from "@/lib/skema";
 
 export default function FormDaftar({ lomba }) {
   const [f, setF] = useState({
-    nama: "", no_wa: "", paguyuban: "", lomba_id: "", kategori_usia: "", catatan: "",
+    nama: "", no_wa: "", paguyuban: "", kategori_usia: "", catatan: "",
   });
+  const [pilihan, setPilihan] = useState([]);
   const [kirim, setKirim] = useState(false);
   const [salah, setSalah] = useState("");
   const [selesai, setSelesai] = useState(null);
@@ -14,18 +15,25 @@ export default function FormDaftar({ lomba }) {
   const ubah = (k) => (e) => setF({ ...f, [k]: e.target.value });
   const terbuka = lomba.filter((l) => !l.penuh);
 
+  const centang = (id) => () =>
+    setPilihan((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
+
   async function daftar() {
+    if (pilihan.length === 0) {
+      setSalah("Centang minimal satu lomba yang mau diikuti.");
+      return;
+    }
     setKirim(true);
     setSalah("");
     try {
       const r = await fetch("/api/daftar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(f),
+        body: JSON.stringify({ ...f, lomba_ids: pilihan }),
       });
       const j = await r.json();
       if (!r.ok) setSalah(j.pesan || "Pendaftaran gagal dikirim. Coba sebentar lagi.");
-      else setSelesai(j.lomba);
+      else setSelesai({ berhasil: j.berhasil || [], ditolak: j.ditolak || [] });
     } catch {
       setSalah("Koneksi terputus. Periksa sinyal lalu kirim ulang.");
     } finally {
@@ -38,13 +46,21 @@ export default function FormDaftar({ lomba }) {
       <div className="animate-muncul rounded-2xl border border-emerald-300 bg-emerald-50 p-5 sm:p-7">
         <h3 className="font-serif text-xl font-bold text-emerald-900">🎉 Pendaftaran tercatat</h3>
         <p className="mt-2 text-sm leading-relaxed text-emerald-900">
-          {f.nama} terdaftar di <strong>{selesai}</strong>. Panitia akan menghubungi
+          {f.nama} terdaftar di{" "}
+          <strong>{selesai.berhasil.join(", ")}</strong>. Panitia akan menghubungi
           nomor {f.no_wa} sebelum hari H untuk konfirmasi teknis.
         </p>
+        {selesai.ditolak.length > 0 && (
+          <p className="mt-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            Sebagian tidak ikut tercatat:{" "}
+            {selesai.ditolak.map((t) => `${t.lomba} — ${t.alasan}`).join("; ")}.
+          </p>
+        )}
         <button
           onClick={() => {
             setSelesai(null);
-            setF({ ...f, nama: "", lomba_id: "", kategori_usia: "", catatan: "" });
+            setPilihan([]);
+            setF({ ...f, nama: "", kategori_usia: "", catatan: "" });
           }}
           className="mt-4 rounded-md bg-emerald-800 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
         >
@@ -78,25 +94,56 @@ export default function FormDaftar({ lomba }) {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="lomba" className={label}>Lomba yang diikuti</label>
-          <select id="lomba" value={f.lomba_id} onChange={ubah("lomba_id")} className={"mt-1 " + isi}>
-            <option value="">Pilih lomba</option>
-            {terbuka.map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.nama}{l.sisaKuota !== null ? ` — sisa ${l.sisaKuota} slot` : ""}
-              </option>
-            ))}
-          </select>
+      <fieldset>
+        <legend className={label}>
+          Lomba yang diikuti{" "}
+          <span className="font-normal text-slate-400">(boleh centang lebih dari satu)</span>
+        </legend>
+        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+          {terbuka.length === 0 && (
+            <p className="text-sm text-slate-500">Semua lomba sedang penuh atau belum dibuka.</p>
+          )}
+          {terbuka.map((l) => {
+            const dipilih = pilihan.includes(l.id);
+            return (
+              <label
+                key={l.id}
+                className={
+                  "flex cursor-pointer items-start gap-2.5 rounded-lg border px-3 py-2.5 text-sm transition-colors " +
+                  (dipilih
+                    ? "border-red-400 bg-red-50 text-merah-pekat"
+                    : "border-stone-300 bg-white hover:bg-stone-50")
+                }
+              >
+                <input
+                  type="checkbox"
+                  checked={dipilih}
+                  onChange={centang(l.id)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-red-700"
+                />
+                <span>
+                  <span className="font-medium">{l.nama}</span>
+                  {l.sisaKuota !== null && (
+                    <span className="block text-xs text-slate-500">sisa {l.sisaKuota} slot</span>
+                  )}
+                </span>
+              </label>
+            );
+          })}
         </div>
-        <div>
-          <label htmlFor="usia" className={label}>Kelompok usia</label>
-          <select id="usia" value={f.kategori_usia} onChange={ubah("kategori_usia")} className={"mt-1 " + isi}>
-            <option value="">Pilih kelompok</option>
-            {KATEGORI_USIA.map((k) => <option key={k}>{k}</option>)}
-          </select>
-        </div>
+        {pilihan.length > 1 && (
+          <p className="mt-2 text-xs text-slate-500">
+            {pilihan.length} lomba dipilih — semuanya terkirim dalam satu pendaftaran.
+          </p>
+        )}
+      </fieldset>
+
+      <div>
+        <label htmlFor="usia" className={label}>Kelompok usia</label>
+        <select id="usia" value={f.kategori_usia} onChange={ubah("kategori_usia")} className={"mt-1 " + isi}>
+          <option value="">Pilih kelompok</option>
+          {KATEGORI_USIA.map((k) => <option key={k}>{k}</option>)}
+        </select>
       </div>
 
       <div>

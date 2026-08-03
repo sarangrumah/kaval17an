@@ -19,8 +19,8 @@ export default async function HalamanLomba() {
         </h1>
         <p className="mt-2 max-w-lg text-sm leading-relaxed text-red-50">
           <span className="font-mono font-bold text-white">{d.totalPendaftar}</span> warga
-          sudah mendaftar. Satu orang boleh ikut lebih dari satu lomba &mdash; kirim
-          formulirnya sekali per lomba.
+          sudah mendaftar. Satu orang boleh ikut lebih dari satu lomba &mdash; cukup
+          centang semua lombanya dalam satu formulir.
         </p>
         <Link
           href="/qr"
