@@ -9,6 +9,38 @@
  * 5. Kembali ke spreadsheet — semua tab sudah terbentuk beserta contoh isinya.
  */
 
+/**
+ * Daftar lomba resmi hasil rapat panitia (spreadsheet perencanaan lomba).
+ * Biaya daftar semua lomba gratis — angka biaya di spreadsheet perencanaan
+ * adalah belanja perlengkapan panitia, bukan biaya pendaftaran.
+ * Kolom kategori memakai kata kunci yang dikenali aplikasi:
+ * "anak" / "remaja" / "dewasa" / "ibu" / "bapak" (lihat lib/skema.js).
+ */
+function dataLomba() {
+  return [
+    // ---- 15 Agustus: remaja & dewasa ----
+    ['tebak-warna-dewasa', 'Tebak Warna', 'Remaja & Dewasa', 60, 0, 'Lapangan Kavling AL', '15 Agustus, 08.00-09.00', 'Individu, 10 ronde @ 5 menit. Terpal, balon, dan karet gelang dari panitia.', 'aktif'],
+    ['sumpit-pinggang', 'Memasukkan Sumpit ke Botol dengan Pinggang', 'Remaja & Dewasa', 60, 0, 'Lapangan Kavling AL', '15 Agustus, 09.00-10.00', 'Beregu, 10 ronde @ 5 menit. Sumpit diikat tali di pinggang.', 'aktif'],
+    ['estafet-gelas-balon', 'Estafet Gelas dengan Balon Tiup', 'Remaja & Dewasa', 60, 0, 'Lapangan Kavling AL', '15 Agustus, 10.00-11.00', 'Beregu 5 orang, gelas plastik dipindahkan memakai balon tiup.', 'aktif'],
+    ['makan-kerupuk', 'Makan Kerupuk dengan Tongkat', 'Remaja & Dewasa', 60, 0, 'Lapangan Kavling AL', '15 Agustus, 15.30-16.30', 'Beregu, kerupuk digantung di bambu.', 'aktif'],
+    ['isi-baskom-kaki', 'Isi Baskom dengan Air Menggunakan Kaki', 'Remaja & Dewasa', 60, 0, 'Lapangan Kavling AL', '15 Agustus, 16.30-17.30', 'Lomba basah, beregu 5 orang. Siapkan baju ganti.', 'aktif'],
+    ['balap-karung', 'Balap Karung', 'Remaja & Dewasa', 60, 0, 'Lapangan Kavling AL', '15 Agustus, 16.30-17.30', 'Individu, karung disediakan panitia.', 'aktif'],
+    ['mobile-legends', 'Mobile Legends', 'Remaja & Dewasa', 0, 0, 'Lapangan Kavling AL', '15 Agustus, 19.00-21.00', 'Turnamen beregu, bawa HP sendiri. PIC: Rico MBG.', 'aktif'],
+    // ---- 16 Agustus: dewasa ----
+    ['jatuhkan-gelas', 'Jatuhkan Gelas dengan Balon', 'Dewasa', 60, 0, 'Lapangan Kavling AL', '16 Agustus, 08.00-09.00', 'Individu, gelas di atas meja dijatuhkan memakai balon.', 'aktif'],
+    ['tenis-meja', 'Tenis Meja', 'Dewasa', 20, 0, 'Lapangan Kavling AL', '16 Agustus, 10.00-17.30', 'Individu, 3 babak per pertandingan; menang 2 babak berturut langsung juara.', 'aktif'],
+    ['catur', 'Catur', 'Dewasa', 20, 0, 'Lapangan Kavling AL', '16 Agustus, 19.00-22.00', 'Individu, sekitar 30 menit per partai. Papan catur boleh bawa sendiri.', 'aktif'],
+    ['gaple', 'Gaple', 'Dewasa', 40, 0, 'Lapangan Kavling AL', '16 Agustus, 19.00-22.00', 'Satu meja 4 pemain, sekitar 30 menit per ronde.', 'aktif'],
+    // ---- 17 Agustus: anak-anak ----
+    ['pindah-bendera', 'Pindahkan Bendera', 'Anak-anak (3-5 tahun)', 40, 0, 'Lapangan Kavling AL', '17 Agustus, 08.00-09.00', 'Individu, 10 ronde @ 5 menit. Bendera dipindahkan memakai sedotan.', 'aktif'],
+    ['estafet-gelas-jepitan', 'Estafet Gelas dengan Jepitan', 'Anak-anak (3-10 tahun)', 60, 0, 'Lapangan Kavling AL', '17 Agustus, 10.00-11.30', 'Beregu 5 anak, 8 ronde. Gelas dioper memakai jepitan jemuran.', 'aktif'],
+    ['sumpit-tongkat', 'Masukkan Sumpit ke Botol dengan Tongkat', 'Anak-anak (3-10 tahun)', 40, 0, 'Lapangan Kavling AL', '17 Agustus, 15.30-16.30', 'Individu, 10 ronde @ 5 menit.', 'aktif'],
+    ['tebak-warna-anak', 'Tebak Warna', 'Anak-anak (3-10 tahun)', 60, 0, 'Lapangan Kavling AL', '17 Agustus, 16.30-17.30', 'Beregu, 8 ronde @ 5 menit. Terpal, balon, dan karet gelang dari panitia.', 'aktif'],
+    ['tiup-bola-pingpong', 'Pindahkan Bola di Air dengan Ditiup', 'Anak-anak (3-10 tahun)', 40, 0, 'Lapangan Kavling AL', '17 Agustus, 16.30-17.30', 'Individu, lomba basah. Bola pingpong ditiup antar gelas.', 'aktif'],
+    ['spons-air', 'Mengisi Air ke Botol dengan Spons', 'Anak-anak (4-10 tahun)', 60, 0, 'Lapangan Kavling AL', '17 Agustus, 16.30-17.30', 'Beregu 5 anak, lomba basah, 8 ronde.', 'aktif']
+  ];
+}
+
 function siapkanSpreadsheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
@@ -60,13 +92,7 @@ function siapkanSpreadsheet() {
     },
     Lomba: {
       header: ['id', 'nama', 'kategori', 'kuota', 'biaya', 'lokasi', 'jadwal', 'deskripsi', 'status'],
-      isi: [
-        ['balap-karung', 'Balap Karung', 'Anak 6-12 tahun', 24, 0, 'Lapangan Kavling AL', '17 Agustus, 09.00', 'Dua putaran, karung disediakan panitia.', 'aktif'],
-        ['makan-kerupuk', 'Makan Kerupuk', 'Semua usia', 40, 0, 'Lapangan Kavling AL', '17 Agustus, 10.00', 'Tangan di belakang punggung.', 'aktif'],
-        ['tarik-tambang', 'Tarik Tambang Antar Paguyuban', 'Dewasa 18+', 30, 0, 'Lapangan Kavling AL', '17 Agustus, 15.00', 'Tiap paguyuban mengirim satu regu berisi 10 orang.', 'aktif'],
-        ['gerak-jalan', 'Karnaval & Gerak Jalan Hias', 'Semua usia', 0, 0, 'Start Pos Ronda Dahlia', '17 Agustus, 07.00', 'Dinilai kekompakan kostum dan yel-yel.', 'aktif'],
-        ['tari-anak', 'Pentas Tari Anak', 'Anak 6-12 tahun', 20, 0, 'Panggung utama', '17 Agustus, 19.30', 'Latihan bersama tiap Minggu sore.', 'aktif']
-      ]
+      isi: dataLomba()
     },
     Jadwal: {
       header: ['tanggal', 'waktu', 'agenda', 'lokasi', 'pic', 'status'],
@@ -212,6 +238,38 @@ function tambahTabDukungan() {
   sheet.autoResizeColumns(1, header.length);
   SpreadsheetApp.flush();
   Logger.log('Tab Dukungan berhasil dibuat.');
+}
+
+/**
+ * Ganti isi tab Lomba dengan daftar lomba resmi hasil rapat panitia
+ * (lihat dataLomba di atas). HANYA tab Lomba yang disentuh — header,
+ * tab lain, dan data pendaftaran tetap utuh, jadi aman dijalankan
+ * di spreadsheet yang sudah berisi data sungguhan.
+ * (Jangan jalankan ulang siapkanSpreadsheet: fungsi itu mengosongkan semua tab.)
+ *
+ * Catatan: pendaftar lama yang lomba_id-nya tidak ada lagi di daftar baru
+ * (tarik-tambang, gerak-jalan, tari-anak) perlu dicek manual di tab Pendaftaran.
+ */
+function perbaruiTabLomba() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var header = ['id', 'nama', 'kategori', 'kuota', 'biaya', 'lokasi', 'jadwal', 'deskripsi', 'status'];
+  var sheet = ss.getSheetByName('Lomba');
+  if (!sheet) {
+    sheet = ss.insertSheet('Lomba');
+    sheet.getRange(1, 1, 1, header.length).setValues([header])
+         .setFontWeight('bold').setBackground('#1e293b').setFontColor('#ffffff');
+    sheet.setFrozenRows(1);
+  }
+  var terakhir = sheet.getLastRow();
+  if (terakhir > 1) {
+    sheet.getRange(2, 1, terakhir - 1, sheet.getLastColumn()).clearContent();
+  }
+  var isi = dataLomba();
+  sheet.getRange(2, 1, isi.length, header.length).setValues(isi);
+  sheet.autoResizeColumns(1, header.length);
+  SpreadsheetApp.flush();
+  ss.toast('Tab Lomba diperbarui: ' + isi.length + ' lomba.', 'Lomba', 10);
+  Logger.log('Tab Lomba diperbarui berisi ' + isi.length + ' lomba.');
 }
 
 /**
