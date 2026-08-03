@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PAGUYUBAN, KATEGORI_USIA } from "@/lib/skema";
+import { PAGUYUBAN, KATEGORI_USIA, cocokKelompok } from "@/lib/skema";
 
 export default function FormDaftar({ lomba }) {
   const [f, setF] = useState({
@@ -13,12 +13,31 @@ export default function FormDaftar({ lomba }) {
   const [selesai, setSelesai] = useState(null);
 
   const ubah = (k) => (e) => setF({ ...f, [k]: e.target.value });
-  const terbuka = lomba.filter((l) => !l.penuh);
+
+  // Lomba tersaring mengikuti kelompok usia yang dipilih; ganti kelompok
+  // ikut membuang centangan lomba yang tidak lagi sesuai.
+  const sesuai = f.kategori_usia
+    ? lomba.filter((l) => cocokKelompok(l.kategori, f.kategori_usia))
+    : [];
+  const ubahUsia = (e) => {
+    const usia = e.target.value;
+    setF({ ...f, kategori_usia: usia });
+    setPilihan((p) =>
+      p.filter((id) => {
+        const l = lomba.find((x) => x.id === id);
+        return l && cocokKelompok(l.kategori, usia);
+      })
+    );
+  };
 
   const centang = (id) => () =>
     setPilihan((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
 
   async function daftar() {
+    if (!f.kategori_usia) {
+      setSalah("Pilih dulu kelompok usianya supaya daftar lombanya muncul.");
+      return;
+    }
     if (pilihan.length === 0) {
       setSalah("Centang minimal satu lomba yang mau diikuti.");
       return;
@@ -94,57 +113,77 @@ export default function FormDaftar({ lomba }) {
         </div>
       </div>
 
+      <div>
+        <label htmlFor="usia" className={label}>Kelompok usia peserta</label>
+        <select id="usia" value={f.kategori_usia} onChange={ubahUsia} className={"mt-1 " + isi}>
+          <option value="">Pilih kelompok</option>
+          {KATEGORI_USIA.map((k) => <option key={k}>{k}</option>)}
+        </select>
+      </div>
+
       <fieldset>
         <legend className={label}>
           Lomba yang diikuti{" "}
           <span className="font-normal text-slate-400">(boleh centang lebih dari satu)</span>
         </legend>
-        <div className="mt-2 grid gap-2 sm:grid-cols-2">
-          {terbuka.length === 0 && (
-            <p className="text-sm text-slate-500">Semua lomba sedang penuh atau belum dibuka.</p>
-          )}
-          {terbuka.map((l) => {
-            const dipilih = pilihan.includes(l.id);
-            return (
-              <label
-                key={l.id}
-                className={
-                  "flex cursor-pointer items-start gap-2.5 rounded-lg border px-3 py-2.5 text-sm transition-colors " +
-                  (dipilih
-                    ? "border-red-400 bg-red-50 text-merah-pekat"
-                    : "border-stone-300 bg-white hover:bg-stone-50")
-                }
-              >
-                <input
-                  type="checkbox"
-                  checked={dipilih}
-                  onChange={centang(l.id)}
-                  className="mt-0.5 h-4 w-4 shrink-0 accent-red-700"
-                />
-                <span>
-                  <span className="font-medium">{l.nama}</span>
-                  {l.sisaKuota !== null && (
-                    <span className="block text-xs text-slate-500">sisa {l.sisaKuota} slot</span>
-                  )}
-                </span>
-              </label>
-            );
-          })}
-        </div>
+
+        {!f.kategori_usia && (
+          <p className="mt-2 rounded-lg border border-dashed border-stone-300 bg-stone-50 px-3 py-4 text-center text-sm text-slate-500">
+            Pilih kelompok usia dulu — daftar lomba yang sesuai akan muncul di sini.
+          </p>
+        )}
+
+        {f.kategori_usia && (
+          <div className="mt-2 grid gap-2 sm:grid-cols-2">
+            {sesuai.length === 0 && (
+              <p className="text-sm text-slate-500 sm:col-span-2">
+                Belum ada lomba untuk kelompok {f.kategori_usia}.
+              </p>
+            )}
+            {sesuai.map((l) => {
+              const dipilih = pilihan.includes(l.id);
+              return (
+                <label
+                  key={l.id}
+                  className={
+                    "flex items-start gap-2.5 rounded-lg border px-3 py-2.5 text-sm transition-colors " +
+                    (l.penuh
+                      ? "cursor-not-allowed border-stone-200 bg-stone-50 opacity-60"
+                      : dipilih
+                        ? "cursor-pointer border-red-400 bg-red-50 text-merah-pekat"
+                        : "cursor-pointer border-stone-300 bg-white hover:bg-stone-50")
+                  }
+                >
+                  <input
+                    type="checkbox"
+                    checked={dipilih}
+                    disabled={l.penuh}
+                    onChange={centang(l.id)}
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-red-700"
+                  />
+                  <span className="min-w-0">
+                    <span className="font-medium">{l.nama}</span>
+                    <span className="block text-xs text-slate-500">
+                      {l.kategori}
+                      {l.penuh
+                        ? " · kuota penuh"
+                        : l.sisaKuota !== null
+                          ? ` · sisa ${l.sisaKuota} slot`
+                          : ""}
+                    </span>
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        )}
+
         {pilihan.length > 1 && (
           <p className="mt-2 text-xs text-slate-500">
             {pilihan.length} lomba dipilih — semuanya terkirim dalam satu pendaftaran.
           </p>
         )}
       </fieldset>
-
-      <div>
-        <label htmlFor="usia" className={label}>Kelompok usia</label>
-        <select id="usia" value={f.kategori_usia} onChange={ubah("kategori_usia")} className={"mt-1 " + isi}>
-          <option value="">Pilih kelompok</option>
-          {KATEGORI_USIA.map((k) => <option key={k}>{k}</option>)}
-        </select>
-      </div>
 
       <div>
         <label htmlFor="cat" className={label}>Catatan untuk panitia <span className="font-normal text-slate-400">(boleh dikosongkan)</span></label>
